@@ -1,5 +1,5 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' show join;
+import 'package:sqflite/sqflite.dart';
 
 class DBManager{
   static final _databaseName = "ProjectLocus.db";
@@ -31,14 +31,14 @@ class DBManager{
   static final locationsTime = 'Time';
   static final locationsDate = 'Date';
 
-  static late Database _db;
+  static Database _db;
   Future<Database> get database async {
     if (_db != null) return _db;
     _db = await _initDatabase();
     return _db;
   }
 
-  _initDatabase() async {
+  Future<Database> _initDatabase() async {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath,  _databaseName);
     return await openDatabase(path,

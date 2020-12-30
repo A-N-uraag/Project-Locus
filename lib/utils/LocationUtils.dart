@@ -20,7 +20,7 @@ class LocationUtils{
     }
   }
 
-  void getPermission() async {
+  Future<void> getPermission() async {
     LocationPermission permission = await Geolocator.requestPermission();
     if (permission != LocationPermission.always && permission != LocationPermission.deniedForever){
       print("The app needs to be able to access the location of the device always in order for its serices to work properly");
