@@ -31,7 +31,7 @@ class DBManager{
   static final locationsTime = 'Time';
   static final locationsDate = 'Date';
 
-  static Database _db;
+  static late Database _db;
   Future<Database> get database async {
     if (_db != null) return _db;
     _db = await _initDatabase();

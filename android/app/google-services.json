@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "434622082936",
+    "project_id": "project-locus-58704",
+    "storage_bucket": "project-locus-58704.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434622082936:android:decd422ee616066097228d",
+        "android_client_info": {
+          "package_name": "com.example.ProjectLocus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434622082936-e5e3v2kiv26mfmdjbqbfkq0475m6g4tg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxiH20Ps1kHDMHrE6wtmKP835Lm2FIiNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434622082936-e5e3v2kiv26mfmdjbqbfkq0475m6g4tg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

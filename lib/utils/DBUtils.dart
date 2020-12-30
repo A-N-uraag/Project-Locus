@@ -7,14 +7,14 @@ class DBUtils{
 
   Future<OwnerProfile> getDetails() async {
     Database db = await DBManager().database;
-    List<Map<String,dynamic>> result = await db.rawQuery("SELECT * FROM " + DBManager.detailsTable, null);
+    List<Map<String,dynamic>> result = await db.rawQuery("SELECT * FROM " + DBManager.detailsTable, []);
     Map<String,dynamic> details = result[0];
     return OwnerProfile(details[DBManager.detailsName].toString(),details[DBManager.detailsEmail].toString(),details[DBManager.detailsBio].toString(),details[DBManager.detailsDOB].toString(),details[DBManager.detailsMobile].toString(),details[DBManager.detailsPrivateMode].toString()=="true");
   }
 
   Future<List<Profile>> getFavourites() async {
     Database db = await DBManager().database;
-    List<Map<String,dynamic>> results = await db.rawQuery("SELECT * FROM " + DBManager.favouritesTable, null);
+    List<Map<String,dynamic>> results = await db.rawQuery("SELECT * FROM " + DBManager.favouritesTable, []);
     return results.map((result) => Profile(result[DBManager.favouritesName].toString(),result[DBManager.favouritesEmail].toString(),result[DBManager.favouritesBio].toString(),result[DBManager.favouritesDOB].toString(),result[DBManager.favouritesMobile].toString())).toList();
   }
 
