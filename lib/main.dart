@@ -1,6 +1,7 @@
-import 'package:ProjectLocus/profile.dart';
-import 'package:ProjectLocus/utils/homepage.dart';
-import 'package:ProjectLocus/utils/namecard.dart';
+import 'package:ProjectLocus/pages/HasAccess.dart';
+import 'package:ProjectLocus/pages/settings.dart';
+import 'package:ProjectLocus/pages/homepage.dart';
+import 'package:ProjectLocus/pages/GivenAccess.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -45,9 +46,9 @@ class LocusNavTabs extends StatelessWidget {
           body: TabBarView(
             children: [
               HomePage(),
-              Center( child: Text("Has Access"),),
+              HasAccess(),
               Center( child: Text("Favorites")),
-              Center( child: Text("Give Access")),
+              GivenAccess(),
               ProfileView()
             ],
           ),

@@ -20,12 +20,11 @@ class NameCard extends StatelessWidget {
               children: [
                 Icon(Icons.person, color: Color(0xff33ffcc),),
                 Text("User 101"),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children:[Icon(Icons.email, size: 20,), Text(" 101@usermail.com")]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Row(children: [Icon(Icons.phone, size: 20), Text(" 9999999999")]),
-                    Row(children: [Icon(Icons.cake, size: 20), Text(" 01-01-0000")]),
+                    Row(children:[Icon(Icons.email, size: 20,), Text(" 101@usermail.com")]),
                 ]),
                 Text("This is User's bio")
               ],

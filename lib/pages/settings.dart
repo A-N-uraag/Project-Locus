@@ -1,4 +1,4 @@
-import 'package:ProjectLocus/utils/namecard.dart';
+import 'package:ProjectLocus/components/namecard.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
