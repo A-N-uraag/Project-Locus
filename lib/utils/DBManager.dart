@@ -11,7 +11,6 @@ class DBManager{
 
   static final detailsTable = 'Details';
   static final detailsName = 'Name';
-  static final detailsDOB = 'DOB';
   static final detailsBio = 'Bio';
   static final detailsEmail = 'Email';
   static final detailsMobile = 'Mobile';
@@ -20,9 +19,12 @@ class DBManager{
   static final favouritesTable = 'Favourites';
   static final favouritesEmail = 'Email';
   static final favouritesName = 'Name';
-  static final favouritesDOB = 'DOB';
   static final favouritesBio = 'Bio';
-  static final favouritesMobile = 'Mobile';
+
+  static final emergencyTable = 'Emergency_list';
+  static final emergencyName = 'Name';
+  static final emergencyEmail = 'Email';
+  static final emergencyMobile = 'Mobile';
 
   static final locationsTable = 'Locations';
   static final locationsEmail = 'Email';
@@ -47,8 +49,9 @@ class DBManager{
   }
 
   _onCreate(Database db, int version) async {
-    await db.execute("CREATE TABLE $detailsTable ( $detailsEmail TEXT PRIMARY KEY, $detailsName TEXT NOT NULL, $detailsDOB TEXT NOT NULL, $detailsBio TEXT NOT NULL, $detailsMobile TEXT NOT NULL, $detailsPrivateMode TEXT NOT NULL)");
-    await db.execute("CREATE TABLE $favouritesTable ( $favouritesEmail TEXT PRIMARY KEY, $favouritesName TEXT NOT NULL, $favouritesDOB TEXT NOT NULL, $favouritesBio TEXT NOT NULL, $favouritesMobile TEXT NOT NULL)");
+    await db.execute("CREATE TABLE $detailsTable ( $detailsEmail TEXT PRIMARY KEY, $detailsName TEXT NOT NULL, $detailsBio TEXT NOT NULL, $detailsMobile TEXT NOT NULL, $detailsPrivateMode TEXT NOT NULL)");
+    await db.execute("CREATE TABLE $favouritesTable ( $favouritesEmail TEXT PRIMARY KEY, $favouritesName TEXT NOT NULL, $favouritesBio TEXT NOT NULL)");
+    await db.execute("CREATE TABLE $emergencyTable ( $emergencyEmail TEXT PRIMARY KEY, $emergencyName TEXT NOT NULL, $emergencyMobile TEXT NOT NULL)");
     await db.execute("CREATE TABLE $locationsTable ( $locationsEmail TEXT PRIMARY KEY, $locationsLat TEXT NOT NULL, $locationsLong TEXT NOT NULL, $locationsTime TEXT NOT NULL, $locationsDate TEXT NOT NULL)");
   }
 }
