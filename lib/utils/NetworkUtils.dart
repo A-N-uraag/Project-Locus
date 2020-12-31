@@ -53,8 +53,8 @@ class NetworkUtils{
     return firestore.collection(_publicDetailsCollection).doc(details.email).set(details.toPublicViewJson());
   }
 
-  static Future<void> savePrivateDetails() async {
-    // yet to implement
+  static Future<void> savePrivateDetails(String email, PrivateDetails details) async {
+    return firestore.collection(_privateDetailsCollection).doc(email).set(details.toJson());
   }
 
   static Future<void> saveLocation(String email, Location location){
