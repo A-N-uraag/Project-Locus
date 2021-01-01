@@ -1,3 +1,4 @@
+import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
 
@@ -7,14 +8,13 @@ class GivenAccess extends StatefulWidget {
 }
 
 class _GivenAccessState extends State<GivenAccess> {
-  List GivenAccessList;
+  List givenAccessList;
   var userMail = "trial1";
 
   @override
   void initState() {
     super.initState();
   }
-
   
   @override
   void dispose() {
@@ -33,18 +33,17 @@ class _GivenAccessState extends State<GivenAccess> {
                       backgroundColor: Colors.black,
                     ),
                   );
-          List content = snapshot.data[0];
+          List<Profile> content = snapshot.data;
           return new ListView.builder(
             scrollDirection: Axis.vertical,
             padding: new EdgeInsets.all(6.0),
             itemCount: content.length,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
-                  leading: GivenAccessList[index].name,
-                  title: GivenAccessList[index].email,
-                  subtitle: GivenAccessList[index].bio,
-                  onTap: () {},
-                );
+                title: Text(content[index].name),
+                subtitle: Text(content[index].email),
+                onTap: () {},
+              );
             }
           );
         }

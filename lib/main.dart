@@ -20,6 +20,7 @@ class Locus extends StatelessWidget {
     );
   }
 }
+
 class LocusNavTabs extends StatelessWidget {
 
   @override
@@ -53,7 +54,7 @@ class LocusNavTabs extends StatelessWidget {
             ],
           ),
         ),
-        )
-      );
+      )
+    );
   }
 }

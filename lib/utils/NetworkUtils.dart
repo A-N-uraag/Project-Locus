@@ -21,16 +21,16 @@ class NetworkUtils{
   static Future<List<Profile>> getHasAccess(String email) async {
     DocumentSnapshot result = await firestore.collection(_hasAccessCollection).doc(email).get();
     Map<String,dynamic> data = result.data();
-    List<String> userList = data['accessible_users'];
-    QuerySnapshot profileList = await firestore.collection(_publicDetailsCollection).where('email',arrayContainsAny: userList).get();
+    List<dynamic> userList = data['accessible_users'];
+    QuerySnapshot profileList = await firestore.collection(_publicDetailsCollection).where('email',whereIn: userList).get();
     return profileList.docs.map((doc) => Profile.fromJson(doc.data())).toList();
   }
 
   static Future<List<Profile>> getGivenAccess(String email) async {
     DocumentSnapshot result = await firestore.collection(_givenAccessCollection).doc(email).get();
     Map<String,dynamic> data = result.data();
-    List<String> userList = data['access_given_users'];
-    QuerySnapshot profileList = await firestore.collection(_publicDetailsCollection).where('email',arrayContainsAny: userList).get();
+    List<dynamic> userList = data['access_given_users'];
+    QuerySnapshot profileList = await firestore.collection(_publicDetailsCollection).where('email',whereIn: userList).get();
     return profileList.docs.map((doc) => Profile.fromJson(doc.data())).toList();
   }
 
@@ -41,12 +41,12 @@ class NetworkUtils{
   }
 
   static Future<List<Profile>> getFavouritesDetails(List<String> emails) async {
-    QuerySnapshot profileList = await firestore.collection(_publicDetailsCollection).where('email',arrayContainsAny: emails).get();
+    QuerySnapshot profileList = await firestore.collection(_publicDetailsCollection).where('email',whereIn: emails).get();
     return profileList.docs.map((doc) => Profile.fromJson(doc.data())).toList();
   }
 
   static Future<void> saveGivenAccess(String userEmail,List<String> emails) async {
-    return firestore.collection(_givenAccessCollection).doc(userEmail).set({"access_given-users" : emails});
+    return firestore.collection(_givenAccessCollection).doc(userEmail).set({"access_given_users" : emails});
   }
 
   static Future<void> savePublicDetails(OwnerProfile details) async {
