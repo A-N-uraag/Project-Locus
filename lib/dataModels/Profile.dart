@@ -60,6 +60,8 @@ class PrivateDetails{
   List<String> favourites;
   List<EmergencyContact> emergencyList;
 
+  PrivateDetails(this.mobile,this.favourites,this.emergencyList);
+
   Map<String,dynamic> toJson() => {
     "mobile": mobile,
     "favourites": favourites,

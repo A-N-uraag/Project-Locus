@@ -1,4 +1,5 @@
-import 'package:ProjectLocus/pages/UserEntryPage.dart';
+import 'package:ProjectLocus/pages/UserRegisterPage.dart';
+import 'package:ProjectLocus/pages/UserSignInPage.dart';
 import 'package:flutter/material.dart';
 
 class EntryOptionsPage extends StatelessWidget{
@@ -8,6 +9,12 @@ class EntryOptionsPage extends StatelessWidget{
     return Scaffold(
       body: Center(
         child: Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Color(0xFF212121),
+            border: Border.all(color: Color(0xff33ffcc)),
+            borderRadius: BorderRadius.all(Radius.circular(5))
+          ),
           width: MediaQuery.of(context).size.width*0.85,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -15,12 +22,15 @@ class EntryOptionsPage extends StatelessWidget{
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                margin: EdgeInsets.only(bottom: 25),
-                child: Text("Welcome to Locus", style: TextStyle(color: Color(0xff33ffcc), fontSize: 24),),
+                width: MediaQuery.of(context).size.width*0.9,
+                child: Image(
+                  fit: BoxFit.fitWidth,
+                  image: AssetImage('assets/locus.jpg'),
+                ),
               ),
               Container(
-                margin: EdgeInsets.only(bottom: 15),
-                child: Text("Register if you are a new user or Sign In to continue to your account.",style: TextStyle(fontSize: 18), textAlign: TextAlign.center,),
+                margin: EdgeInsets.only(bottom: 25),
+                child: Text("Welcome to Locus", style: TextStyle(fontSize: 24),),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -29,7 +39,7 @@ class EntryOptionsPage extends StatelessWidget{
                     color: Color(0xff33ffcc),
                     textColor: Colors.black,
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => UserEntryPage("Register")));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => UserRegisterPage()));
                     },
                     child: Text("REGISTER",style: TextStyle(fontSize: 16),),
                   ),
@@ -37,7 +47,7 @@ class EntryOptionsPage extends StatelessWidget{
                     color: Color(0xff33ffcc),
                     textColor: Colors.black,
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => UserEntryPage("SignIn")));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => UserSignInPage()));
                     },
                     child: Text("SIGN IN", style: TextStyle(fontSize: 16),),
                   )
