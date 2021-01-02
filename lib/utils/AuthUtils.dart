@@ -17,11 +17,7 @@ class AuthUtils{
         password: password
       );
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'wrong-password') {
-        return Future.error('wrong-password');
-      } else {
-        return Future.error('invalid-email');
-      }
+      return Future.error(e.code);
     }
     return userCredential;
   }
@@ -34,7 +30,7 @@ class AuthUtils{
         password: password
       );
     } on FirebaseAuthException catch (e) {
-      return Future.error(e);
+      return Future.error(e.code);
     }
     await sendEmailVerification();
     return userCredential;
@@ -93,5 +89,10 @@ class AuthUtils{
         return UserState.signed_in_not_verified;
       }
     }
+  }
+
+  static Map<String,String> getCurrentUser(){
+    User user = auth.currentUser;
+    return {"name": user.displayName, "email": user.email};
   }
 }

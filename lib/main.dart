@@ -1,7 +1,7 @@
-import 'package:ProjectLocus/pages/HasAccess.dart';
-import 'package:ProjectLocus/pages/settings.dart';
-import 'package:ProjectLocus/pages/homepage.dart';
-import 'package:ProjectLocus/pages/GivenAccess.dart';
+import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
+import 'package:ProjectLocus/utils/AuthUtils.dart';
+import 'package:ProjectLocus/pages/LocusHome.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,46 +15,82 @@ class Locus extends StatelessWidget {
       title: 'Project Locus',
       theme: ThemeData(
         primaryColor: Colors.black,
+        brightness: Brightness.dark
       ),
-      home: LocusNavTabs(),
+      home: LocusApp(),
     );
   }
 }
 
-class LocusNavTabs extends StatelessWidget {
+class LocusApp extends StatelessWidget {
+
+  Future<void> initializeFirebase() async {
+    await Firebase.initializeApp();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 5,
-        child: Theme(
-          data: ThemeData(
-            brightness: Brightness.dark
-          ),
-          child: Scaffold(
-          bottomNavigationBar: TabBar(
-            tabs: [
-                Tab(icon: Icon(Icons.home,), text: "Home",),
-                Tab(icon: Icon(Icons.people), text: "Has Access"),
-                Tab(icon: Icon(Icons.favorite), text: "Favorites"),
-                Tab(icon: Icon(Icons.person_add_alt), text: "Give Access"),
-                Tab(icon: Icon(Icons.settings), text: "Settings"),
-              ],
-            unselectedLabelColor: Color(0xff999999),
-            labelColor: Color(0xff33ffcc),
-            indicatorColor: Colors.transparent
-          ),
-          body: TabBarView(
-            children: [
-              HomePage(),
-              HasAccess(),
-              Center( child: Text("Favorites")),
-              GivenAccess(),
-              ProfileView()
-            ],
-          ),
-        ),
-      )
+    return FutureBuilder(
+      future: initializeFirebase(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot){
+        if (snapshot.connectionState == ConnectionState.waiting){
+          return Scaffold(
+            body: Center(
+              child: Container(
+                alignment: Alignment.center,
+                child: Text("Welcome to Locus...",style: TextStyle(color: Color(0xff33ffcc),fontSize: 20),),
+              ),
+            ),
+          );
+        }
+        switch(AuthUtils.getUserState()){
+          case UserState.signed_in_and_verified:{
+            return LocusHome();
+          } 
+          case UserState.signed_out:{
+            return EntryOptionsPage();
+          }
+          case UserState.signed_in_not_verified:{
+            return Scaffold(
+              body: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xff33ffcc)),
+                    borderRadius: BorderRadius.all(Radius.circular(5))
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Welcome and thanks for using Locus. Your email id verification is pending. Please complete the verification to continue.",
+                        style: TextStyle(fontSize: 24),
+                        textAlign: TextAlign.center,
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(15),
+                        child: RaisedButton(
+                          child: Text("Send verification mail",style: TextStyle(color: Colors.black,fontSize: 16),),
+                          onPressed: ()async {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Sending verification mail..."),
+                            ));
+                            await AuthUtils.sendEmailVerification();
+                            Scaffold.of(context).removeCurrentSnackBar();
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Email sent. Please verify to continue."),
+                            ));
+                          }
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+        }
+      }
     );
   }
 }
