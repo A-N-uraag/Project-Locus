@@ -1,4 +1,5 @@
 import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
+import 'package:ProjectLocus/pages/EmailVerificationPage.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/pages/LocusHome.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -51,43 +52,7 @@ class LocusApp extends StatelessWidget {
             return EntryOptionsPage();
           }
           case UserState.signed_in_not_verified:{
-            return Scaffold(
-              body: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xff33ffcc)),
-                    borderRadius: BorderRadius.all(Radius.circular(5))
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("Welcome and thanks for using Locus. Your email id verification is pending. Please complete the verification to continue.",
-                        style: TextStyle(fontSize: 24),
-                        textAlign: TextAlign.center,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(15),
-                        child: RaisedButton(
-                          child: Text("Send verification mail",style: TextStyle(color: Colors.black,fontSize: 16),),
-                          onPressed: ()async {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text("Sending verification mail..."),
-                            ));
-                            await AuthUtils.sendEmailVerification();
-                            Scaffold.of(context).removeCurrentSnackBar();
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text("Email sent. Please verify to continue."),
-                            ));
-                          }
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
+            return EmailVerificationPage();
           }
         }
       }

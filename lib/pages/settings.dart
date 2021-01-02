@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ProjectLocus/components/namecard.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,7 @@ class ProfileView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: FloatingActionButton.extended(
+              heroTag: Random().nextInt(1000),
               onPressed: () {
                 // Add your onPressed code here!
               },
@@ -32,6 +35,7 @@ class ProfileView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: Random().nextInt(1000),
         onPressed: () {
           // Add your onPressed code here!
         },

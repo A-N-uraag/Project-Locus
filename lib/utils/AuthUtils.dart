@@ -39,20 +39,20 @@ class AuthUtils{
   static Future<void> sendEmailVerification() async {
     User user = auth.currentUser;
     ActionCodeSettings settings = ActionCodeSettings(
-        url: 'https://www.example.com/?email=${user.email}',
-        dynamicLinkDomain: "example.page.link",
+        url: 'https://projectlocus.page.link/?email=${user.email}',
+        dynamicLinkDomain: "projectlocus.page.link",
         androidPackageName: "com.example.ProjectLocus",
         androidMinimumVersion: "12",
         androidInstallApp: true,
         iOSBundleId: "com.example.ProjectLocus",
         handleCodeInApp: true);
-    await user.sendEmailVerification(settings);
+    await user.sendEmailVerification();
   }
 
   static Future<void> sendResetPasswordEmail(String email) async {
     ActionCodeSettings settings = ActionCodeSettings(
-        url: 'https://www.example.com/?email=$email',
-        dynamicLinkDomain: "example.page.link",
+        url: 'https://projectlocus.page.link/?email=$email',
+        dynamicLinkDomain: "projectlocus.page.link",
         androidPackageName: "com.example.ProjectLocus",
         androidMinimumVersion: "12",
         androidInstallApp: true,
@@ -89,6 +89,10 @@ class AuthUtils{
         return UserState.signed_in_not_verified;
       }
     }
+  }
+
+  static Future<void> signOut() async {
+    await auth.signOut();
   }
 
   static Map<String,String> getCurrentUser(){

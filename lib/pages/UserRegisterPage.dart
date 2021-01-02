@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/utils/DBUtils.dart';
@@ -26,6 +28,7 @@ class _UserRegisterState extends State<UserRegisterPage>{
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
+        heroTag: Random().nextInt(1000),
         backgroundColor: Colors.transparent,
         child: Icon(
           Icons.close,
@@ -55,11 +58,6 @@ class _UserRegisterState extends State<UserRegisterPage>{
                     child: Image(
                       fit: BoxFit.fitWidth,
                       image: AssetImage('assets/locus.jpg'),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 15),
-                    child: Text("Register as new user",style: TextStyle(fontSize: 22)
                     ),
                   ),
                   TextFormField(

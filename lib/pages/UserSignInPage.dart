@@ -1,6 +1,8 @@
+import 'package:ProjectLocus/pages/EmailVerificationPage.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/pages/LocusHome.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class UserSignInPage extends StatefulWidget {
 
@@ -21,6 +23,7 @@ class _UserSignInState extends State<UserSignInPage>{
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
+        heroTag: Random().nextInt(1000),
         backgroundColor: Colors.transparent,
         child: Icon(
           Icons.close,
@@ -50,12 +53,6 @@ class _UserSignInState extends State<UserSignInPage>{
                     child: Image(
                       fit: BoxFit.fitWidth,
                       image: AssetImage('assets/locus.jpg'),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom:15),
-                    child: Text( "Sign In to your account", 
-                      style: TextStyle(fontSize: 22)
                     ),
                   ),
                   TextFormField(
@@ -102,10 +99,18 @@ class _UserSignInState extends State<UserSignInPage>{
                               showMsg = true;
                               msg = Text("Successfully signed in!",style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),);
                             });
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) =>LocusHome()), 
-                              (Route<dynamic> route) => false
-                            );
+                            if(AuthUtils.getUserState() == UserState.signed_in_and_verified){
+                              Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(builder: (context) =>LocusHome()), 
+                                (route) => false
+                              );
+                            }
+                            else {
+                              Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(builder: (context) => EmailVerificationPage()), 
+                                (route) => false
+                              );
+                            }
                           })
                           .catchError((e){
                             this.setState(() {
