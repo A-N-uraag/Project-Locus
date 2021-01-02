@@ -8,46 +8,64 @@ class GivenAccess extends StatefulWidget {
 }
 
 class _GivenAccessState extends State<GivenAccess> {
-  List givenAccessList;
+  static List<Profile> givenAccessList;
   var userMail = "trial1";
 
   @override
   void initState() {
     super.initState();
   }
-  
+
   @override
   void dispose() {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: new FutureBuilder(
+  Widget getGivenAccessList() {
+    if (givenAccessList == null) {
+      var component = new FutureBuilder(
         future: NetworkUtils.getGivenAccess(userMail),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData)
             return Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.black,
-                    ),
-                  );
-          List<Profile> content = snapshot.data;
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.black,
+              ),
+            );
+          givenAccessList = snapshot.data;
           return new ListView.builder(
             scrollDirection: Axis.vertical,
             padding: new EdgeInsets.all(6.0),
-            itemCount: content.length,
+            itemCount: givenAccessList.length,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
-                title: Text(content[index].name),
-                subtitle: Text(content[index].email),
+                title: Text(givenAccessList[index].name),
+                subtitle: Text(givenAccessList[index].email),
                 onTap: () {},
               );
             }
           );
         }
-      )
-    );
+      );
+      return component;
+    }
+    else {
+      return new ListView.builder(
+          scrollDirection: Axis.vertical,
+          padding: new EdgeInsets.all(6.0),
+          itemCount: givenAccessList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(givenAccessList[index].name),
+              subtitle: Text(givenAccessList[index].email),
+              onTap: () {},
+            );
+          });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: getGivenAccessList());
   }
 }
