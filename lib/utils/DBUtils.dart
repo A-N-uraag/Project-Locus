@@ -66,7 +66,7 @@ class DBUtils{
       DBManager.detailsPrivateMode : details.isPrivateModeOn.toString()
     };
     Database db = await DBManager().database;
-    return await db.insert(DBManager.detailsTable, detailsEntry);
+    return await db.insert(DBManager.detailsTable, detailsEntry, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   static Future<int> editDetails(OwnerProfile details) async {

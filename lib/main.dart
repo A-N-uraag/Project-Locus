@@ -2,11 +2,15 @@ import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
 import 'package:ProjectLocus/pages/EmailVerificationPage.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/pages/LocusHome.dart';
+import 'package:ProjectLocus/utils/BackgroundUtils.dart';
+import 'package:ProjectLocus/utils/LocationUtils.dart';
+import 'package:background_fetch/background_fetch.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(Locus());
+  BackgroundFetch.registerHeadlessTask(BackgroundUtils.updateLocationInBg);
 }
 
 class Locus extends StatelessWidget {
@@ -26,7 +30,12 @@ class Locus extends StatelessWidget {
 class LocusApp extends StatelessWidget {
 
   Future<void> initializeFirebase() async {
+    bool permission = await LocationUtils.checkPermission();
+    if(!permission){
+      await LocationUtils.getPermission();
+    }
     await Firebase.initializeApp();
+    await BackgroundUtils.scheduleBgLocationTask();
   }
 
   @override
@@ -38,8 +47,25 @@ class LocusApp extends StatelessWidget {
           return Scaffold(
             body: Center(
               child: Container(
+                width: MediaQuery.of(context).size.width*0.85,
+                decoration: BoxDecoration(
+                  color: Color(0xFF212121),
+                  border: Border.all(color: Color(0xff33ffcc)),
+                  borderRadius: BorderRadius.all(Radius.circular(5))
+                ),
                 alignment: Alignment.center,
-                child: Text("Welcome to Locus...",style: TextStyle(color: Color(0xff33ffcc),fontSize: 20),),
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.8,
+                      child: Image(
+                        fit: BoxFit.fitWidth,
+                        image: AssetImage('assets/locus.jpg'),
+                      ),
+                    ),
+                    LinearProgressIndicator()
+                  ],
+                )
               ),
             ),
           );
