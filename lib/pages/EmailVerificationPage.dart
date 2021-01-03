@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
+import 'package:ProjectLocus/pages/LocusHome.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:flutter/material.dart';
 
@@ -9,17 +10,22 @@ class EmailVerificationPage extends StatelessWidget{
   @override 
   Widget build(BuildContext context){
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
         heroTag: Random().nextInt(1000),
-        backgroundColor: Color(0xff33ffcc),
-        label: Text("Sign out",style: TextStyle(color: Colors.black),),
+        backgroundColor: Colors.transparent,
+        child: Icon(
+          Icons.refresh,
+          color: Color(0xff33ffcc),
+        ),
         onPressed: () async {
-          await AuthUtils.signOut();
-          Navigator.pushAndRemoveUntil(context, 
-            MaterialPageRoute(builder: (context) =>EntryOptionsPage()), 
-            (route) => false
-          );
+          if(await AuthUtils.getUserState() == UserState.signed_in_and_verified){
+            Navigator.pushAndRemoveUntil(
+              context, 
+              MaterialPageRoute(builder: (context) =>LocusHome()), 
+              (route) => false
+            );
+          }
         },
       ),
       body: Builder(
@@ -52,10 +58,10 @@ class EmailVerificationPage extends StatelessWidget{
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.all(15),
+                    margin: EdgeInsets.only(top:15),
                     child: RaisedButton(
                       color: Color(0xff33ffcc),
-                      child: Text("Send verification mail",style: TextStyle(color: Colors.black,fontSize: 16),),
+                      child: Text("Send verification mail again",style: TextStyle(color: Colors.black,fontSize: 16),),
                       onPressed: () async {
                         Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text("Sending verification mail..."),
@@ -66,6 +72,20 @@ class EmailVerificationPage extends StatelessWidget{
                           content: Text("Email sent. Please verify to continue."),
                         ));
                       }
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 5),
+                    child: RaisedButton(
+                      color: Color(0xff33ffcc),
+                      child: Text("Sign out",style: TextStyle(color: Colors.black,fontSize: 16),),
+                      onPressed: () async {
+                        await AuthUtils.signOut();
+                        Navigator.pushAndRemoveUntil(context, 
+                          MaterialPageRoute(builder: (context) =>EntryOptionsPage()), 
+                          (route) => false
+                        );
+                      },
                     ),
                   )
                 ],

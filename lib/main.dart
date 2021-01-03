@@ -29,20 +29,21 @@ class Locus extends StatelessWidget {
 
 class LocusApp extends StatelessWidget {
 
-  Future<void> initializeFirebase() async {
+  Future<UserState> initializeFirebase() async {
     bool permission = await LocationUtils.checkPermission();
     if(!permission){
       await LocationUtils.getPermission();
     }
     await Firebase.initializeApp();
     await BackgroundUtils.scheduleBgLocationTask();
+    return await AuthUtils.getUserState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: initializeFirebase(),
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot){
+      builder: (BuildContext context, AsyncSnapshot<UserState> snapshot){
         if (snapshot.connectionState == ConnectionState.waiting){
           return Scaffold(
             body: Center(
@@ -53,8 +54,10 @@ class LocusApp extends StatelessWidget {
                   border: Border.all(color: Color(0xff33ffcc)),
                   borderRadius: BorderRadius.all(Radius.circular(5))
                 ),
-                alignment: Alignment.center,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width*0.8,
@@ -63,14 +66,17 @@ class LocusApp extends StatelessWidget {
                         image: AssetImage('assets/locus.jpg'),
                       ),
                     ),
-                    LinearProgressIndicator()
+                    Container(
+                      margin: EdgeInsets.all(15),
+                      child: LinearProgressIndicator(),
+                    )
                   ],
                 )
               ),
             ),
           );
         }
-        switch(AuthUtils.getUserState()){
+        switch(snapshot.data){
           case UserState.signed_in_and_verified:{
             return LocusHome();
           } 

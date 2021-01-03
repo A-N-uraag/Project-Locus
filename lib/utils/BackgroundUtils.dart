@@ -31,7 +31,7 @@ class BackgroundUtils{
     if(await LocationUtils.checkPermission()){
       Position location = await LocationUtils.getLocation();
       await Firebase.initializeApp();
-      if(AuthUtils.getUserState() != UserState.signed_out){
+      if( await AuthUtils.getUserState() != UserState.signed_out){
         Map<String,String> user = AuthUtils.getCurrentUser();
         NetworkUtils.saveLocation(
           user['email'].toString(), 

@@ -38,27 +38,11 @@ class AuthUtils{
 
   static Future<void> sendEmailVerification() async {
     User user = auth.currentUser;
-    ActionCodeSettings settings = ActionCodeSettings(
-        url: 'https://projectlocus.page.link/?email=${user.email}',
-        dynamicLinkDomain: "projectlocus.page.link",
-        androidPackageName: "com.example.ProjectLocus",
-        androidMinimumVersion: "12",
-        androidInstallApp: true,
-        iOSBundleId: "com.example.ProjectLocus",
-        handleCodeInApp: true);
     await user.sendEmailVerification();
   }
 
   static Future<void> sendResetPasswordEmail(String email) async {
-    ActionCodeSettings settings = ActionCodeSettings(
-        url: 'https://projectlocus.page.link/?email=$email',
-        dynamicLinkDomain: "projectlocus.page.link",
-        androidPackageName: "com.example.ProjectLocus",
-        androidMinimumVersion: "12",
-        androidInstallApp: true,
-        iOSBundleId: "com.example.ProjectLocus",
-        handleCodeInApp: true);
-    await auth.sendPasswordResetEmail(email: email,actionCodeSettings: settings);
+    await auth.sendPasswordResetEmail(email: email);
   }
 
   static Future<bool> updateUserPassword(String newPassword) async {
@@ -76,7 +60,7 @@ class AuthUtils{
     return result.isNotEmpty;
   }
 
-  static UserState getUserState(){
+  static Future<UserState> getUserState()async {
     User user = auth.currentUser;
     if (user == null) {
       return UserState.signed_out;
@@ -86,6 +70,11 @@ class AuthUtils{
         return UserState.signed_in_and_verified;
       }
       else{
+        await user.getIdTokenResult(true);
+        await user.reload();
+        if(user.emailVerified){
+          return UserState.signed_in_and_verified;
+        }
         return UserState.signed_in_not_verified;
       }
     }

@@ -91,15 +91,16 @@ class _UserSignInState extends State<UserSignInPage>{
                           FocusScope.of(context).unfocus();
                           this.setState(() {
                             showLoader = true;
+                            showMsg = false;
                           });
                           await AuthUtils.signInWithEmail(_email, _password)
-                          .then((value){
+                          .then((value) async {
                             this.setState(() {
                               showLoader = false;
                               showMsg = true;
-                              msg = Text("Successfully signed in!",style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),);
+                              msg = Text("Successfully signed in! Redirecting...",style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),);
                             });
-                            if(AuthUtils.getUserState() == UserState.signed_in_and_verified){
+                            if( await AuthUtils.getUserState() == UserState.signed_in_and_verified){
                               Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(builder: (context) =>LocusHome()), 
                                 (route) => false

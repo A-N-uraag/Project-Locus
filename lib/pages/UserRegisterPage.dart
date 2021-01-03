@@ -133,7 +133,10 @@ class _UserRegisterState extends State<UserRegisterPage>{
                         if(_formKey.currentState.validate()) {
                           _formKey.currentState.save();
                           FocusScope.of(context).unfocus();
-                          this.setState(() {showLoader = true;});
+                          this.setState(() {
+                            showLoader = true;
+                            showMsg = false;
+                          });
                           await AuthUtils.registerWithEmail(_email, _password)
                           .then((value) async {
                             OwnerProfile details = OwnerProfile(_name, _email, _bio, _mobile, false);
