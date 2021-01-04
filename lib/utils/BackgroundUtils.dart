@@ -3,11 +3,15 @@ import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/utils/LocationUtils.dart';
 import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:background_fetch/background_fetch.dart';
+import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:math';
 
 class BackgroundUtils{
-  static Future<void> scheduleBgLocationTask() async {
+
+  static Future<void> scheduleBgFetchTask() async {
     BackgroundFetch.configure(BackgroundFetchConfig(
       minimumFetchInterval: 15,
       stopOnTerminate: false,
@@ -16,10 +20,11 @@ class BackgroundUtils{
       requiresCharging: false,
       requiresStorageNotLow: false,
       requiresDeviceIdle: false,
-      requiredNetworkType: NetworkType.NONE
+      requiredNetworkType: NetworkType.ANY,
+      forceAlarmManager: true
     ), (String taskId) async {
       print("[BackgroundFetch] Event received $taskId");
-      updateLocationInBg(taskId);
+      bgFetchCallback(taskId);
     }).then((int status) {
       print('[BackgroundFetch] configure success: $status');
     }).catchError((e) {
@@ -27,7 +32,12 @@ class BackgroundUtils{
     });
   }
 
-  static void updateLocationInBg(String taskId) async {
+  static void bgFetchCallback(String taskId) async {
+    await bgLocationUpdate();
+    BackgroundFetch.finish(taskId);
+  }
+
+  static Future<void> bgLocationUpdate() async {
     if(await LocationUtils.checkPermission()){
       Position location = await LocationUtils.getLocation();
       await Firebase.initializeApp();
@@ -37,12 +47,31 @@ class BackgroundUtils{
           user['email'].toString(), 
           Location(location.latitude, 
           location.longitude, 
-          location.timestamp.hour.toString() +":"+ location.timestamp.minute.toString() +":"+ location.timestamp.second.toString(), 
-          location.timestamp.day.toString() +":"+ location.timestamp.month.toString() +":"+ location.timestamp.year.toString())
+          location.timestamp.toLocal().hour.toString() +":"+ location.timestamp.toLocal().minute.toString() +":"+ location.timestamp.toLocal().second.toString(), 
+          location.timestamp.toLocal().day.toString() +":"+ location.timestamp.toLocal().month.toString() +":"+ location.timestamp.toLocal().year.toString())
         );
       }
       print("current position is " + location.latitude.toString() + " " + location.latitude.toString());
     }
-    BackgroundFetch.finish(taskId);
+  }
+
+  static alarmManagerCallback() async {
+    await bgLocationUpdate();
+    await AndroidAlarmManager.initialize();
+    await scheduleAndroidBgTask();
+    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+  }
+
+  static Future<void> scheduleAndroidBgTask() async {
+    DateTime datetime  = DateTime.now();
+    await AndroidAlarmManager.oneShotAt(
+      datetime.add(Duration(minutes: 15)), 
+      Random().nextInt(100000), 
+      alarmManagerCallback,
+      allowWhileIdle: true,
+      exact: true,
+      rescheduleOnReboot: true,
+      wakeup: true,
+    );
   }
 }

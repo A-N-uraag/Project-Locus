@@ -1,4 +1,5 @@
 import 'package:ProjectLocus/dataModels/Profile.dart';
+import 'package:ProjectLocus/components/CircularLetterTile.dart';
 import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
 
@@ -41,6 +42,7 @@ class _HasAccessState extends State<HasAccess> {
             itemCount: content.length,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
+                  leading: CircularLetterTile((content[index] as Profile).name[0],50,Colors.blue,25),
                   title: Text((content[index] as Profile).name),
                   subtitle: Text((content[index]as Profile).email),
                   onTap: () {},

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
 import 'package:ProjectLocus/pages/EmailVerificationPage.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
@@ -5,12 +7,13 @@ import 'package:ProjectLocus/pages/LocusHome.dart';
 import 'package:ProjectLocus/utils/BackgroundUtils.dart';
 import 'package:ProjectLocus/utils/LocationUtils.dart';
 import 'package:background_fetch/background_fetch.dart';
+import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(Locus());
-  BackgroundFetch.registerHeadlessTask(BackgroundUtils.updateLocationInBg);
+  BackgroundFetch.registerHeadlessTask(BackgroundUtils.bgFetchCallback);
 }
 
 class Locus extends StatelessWidget {
@@ -29,20 +32,26 @@ class Locus extends StatelessWidget {
 
 class LocusApp extends StatelessWidget {
 
-  Future<UserState> initializeFirebase() async {
+  Future<UserState> initializeApp(BuildContext context) async {
     bool permission = await LocationUtils.checkPermission();
     if(!permission){
-      await LocationUtils.getPermission();
+      await LocationUtils.getPermission(context);
     }
     await Firebase.initializeApp();
-    await BackgroundUtils.scheduleBgLocationTask();
+    if(Platform.isAndroid){
+      await AndroidAlarmManager.initialize();
+      await BackgroundUtils.scheduleAndroidBgTask();
+    }
+    else{
+      await BackgroundUtils.scheduleBgFetchTask();
+    }
     return await AuthUtils.getUserState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: initializeFirebase(),
+      future: initializeApp(context),
       builder: (BuildContext context, AsyncSnapshot<UserState> snapshot){
         if (snapshot.connectionState == ConnectionState.waiting){
           return Scaffold(
