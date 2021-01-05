@@ -22,7 +22,7 @@ class CircularLetterTile extends StatelessWidget{
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: getRandomColor(),
-        border: Border.all(width: 2.5,color: Color(0xff33ffcc)),
+        border: Border.all(width: 2.5,color: Colors.black),
       ),
     );
   }

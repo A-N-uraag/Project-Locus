@@ -1,6 +1,5 @@
 import 'package:ProjectLocus/components/UserListView.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
-import 'package:ProjectLocus/components/CircularLetterTile.dart';
 import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
 
@@ -37,7 +36,7 @@ class _HasAccessState extends State<HasAccess> {
                   );
           }
           List<Profile> content = snapshot.data;
-          return UserListView(content, (Profile user){}, hasCheckBoxes: true, submitButtonTitle: "Submit",onSubmit: (List<Profile> list, Map<String,bool> selectedUsers){}, preSelectedUsers: [],);
+          return UserListView(content, (Profile user){});
         }
       )
     );
