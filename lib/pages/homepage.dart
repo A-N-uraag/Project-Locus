@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
               backgroundColor: Color(0xff33ffcc),
               onPressed: (){
                 Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) => MapsPage()
+                  builder: (BuildContext context) => MapsPage(["loneelf123@gmail.com"])
                 ));
               },
             ),

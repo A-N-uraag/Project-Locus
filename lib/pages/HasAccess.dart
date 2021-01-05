@@ -1,3 +1,4 @@
+import 'package:ProjectLocus/components/UserListView.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/components/CircularLetterTile.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ class HasAccess extends StatefulWidget {
 }
 
 class _HasAccessState extends State<HasAccess> {
-  var userMail = "trial1";
+  var userMail = "anuragreddy1000@gmail.com";
 
   @override
   void initState() {
@@ -27,7 +28,7 @@ class _HasAccessState extends State<HasAccess> {
     return Scaffold(
       body: new FutureBuilder(
         future: NetworkUtils.getHasAccess(userMail),
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot) {
           if (!snapshot.hasData){
             return Center(
                     child: CircularProgressIndicator(
@@ -35,20 +36,8 @@ class _HasAccessState extends State<HasAccess> {
                     ),
                   );
           }
-          List<dynamic> content = snapshot.data;
-          return new ListView.builder(
-            scrollDirection: Axis.vertical,
-            padding: new EdgeInsets.all(6.0),
-            itemCount: content.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                  leading: CircularLetterTile((content[index] as Profile).name[0],50,Colors.blue,25),
-                  title: Text((content[index] as Profile).name),
-                  subtitle: Text((content[index]as Profile).email),
-                  onTap: () {},
-                );
-            }
-          );
+          List<Profile> content = snapshot.data;
+          return UserListView(content, (Profile user){}, hasCheckBoxes: true, submitButtonTitle: "Submit",onSubmit: (List<Profile> list, Map<String,bool> selectedUsers){}, preSelectedUsers: [],);
         }
       )
     );

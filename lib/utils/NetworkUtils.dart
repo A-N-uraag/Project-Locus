@@ -10,12 +10,15 @@ class NetworkUtils{
   static final _givenAccessCollection = "location_given_access";
   static final _locationsCollection = "locations";
 
-  static Future<Map<String,Location>> getLocation(String email) async {
-    DocumentSnapshot result = await firestore.collection(_locationsCollection).doc(email).get();
-    Map<String,dynamic> data = result.data();
-    return {
-      email : Location.fromJson(data)
-    };
+  static Future<Map<String,Location>> getLocations(List<String> emails) async {
+    QuerySnapshot result = await firestore.collection(_locationsCollection).where(FieldPath.documentId, whereIn: emails).get();
+    Map<String,Location> locations = {};
+    result.docs.forEach((doc) {
+      locations.addAll({
+        doc.id : Location.fromJson(doc.data())
+      });
+    });
+    return locations;
   }
 
   static Future<List<Profile>> getHasAccess(String email) async {
@@ -34,10 +37,15 @@ class NetworkUtils{
     return profileList.docs.map((doc) => Profile.fromJson(doc.data())).toList();
   }
 
-  static Future<Profile> getPublicProfile(String email) async {
-    DocumentSnapshot result = await firestore.collection(_publicDetailsCollection).doc(email).get();
-    Map<String,dynamic> data = result.data();
-    return Profile.fromJson(data);
+  static Future<Map<String,Profile>> getPublicProfiles(List<String> emails) async {
+    QuerySnapshot result = await firestore.collection(_publicDetailsCollection).where(FieldPath.documentId, whereIn: emails).get();
+    Map<String,Profile> profiles = {};
+    result.docs.forEach((doc) {
+      profiles.addAll({
+        doc.id : Profile.fromJson(doc.data())
+      });
+    });
+    return profiles;
   }
 
   static Future<List<Profile>> getFavouritesDetails(List<String> emails) async {
