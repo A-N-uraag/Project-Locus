@@ -19,7 +19,7 @@ class ProfileView extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          NameCard(),
+          NameCard("bsg","hshs","hh"),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: FloatingActionButton.extended(

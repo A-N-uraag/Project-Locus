@@ -30,7 +30,7 @@ class _UserListState extends State<UserListView>{
   Widget listTile(Profile user){
     bool isUserSelected = isSelected(user.email);
     return Container(
-      margin: EdgeInsets.only(top:2,bottom:3),
+      margin: EdgeInsets.only(top:3,bottom:4),
       decoration: BoxDecoration(
         border: Border.all(
           color: isUserSelected ? Color(0xff33ffcc):Colors.grey
@@ -40,7 +40,7 @@ class _UserListState extends State<UserListView>{
       child: ListTile(
         title: Text(user.name, style: TextStyle(color: isUserSelected ? Color(0xff33ffcc) : Colors.white),),
         subtitle: Text(user.email,style: TextStyle(color: isUserSelected ? Color(0xff33ffcc) : Colors.white70),),
-        leading: CircularLetterTile(user.name,43,25),
+        leading: CircularLetterTile(user.name,44,25),
         onTap: (){
           widget.onTap(user);
           if(widget.isCheckable){
