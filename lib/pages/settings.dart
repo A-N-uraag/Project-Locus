@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:ProjectLocus/components/namecard.dart';
+import 'package:ProjectLocus/pages/EditProfile.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
@@ -37,7 +38,7 @@ class ProfileView extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         heroTag: Random().nextInt(1000),
         onPressed: () {
-          // Add your onPressed code here!
+          Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile()));
         },
         label: Text("Edit"),
         icon: Icon(Icons.edit),

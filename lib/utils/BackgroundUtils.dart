@@ -51,7 +51,7 @@ class BackgroundUtils{
           location.timestamp.toLocal().day.toString() +":"+ location.timestamp.toLocal().month.toString() +":"+ location.timestamp.toLocal().year.toString())
         );
       }
-      print("current position is " + location.latitude.toString() + " " + location.latitude.toString());
+      print("current position is " + location.latitude.toString() + " " + location.longitude.toString());
     }
   }
 

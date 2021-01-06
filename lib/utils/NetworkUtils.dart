@@ -57,8 +57,8 @@ class NetworkUtils{
     return firestore.collection(_givenAccessCollection).doc(userEmail).set({"access_given_users" : emails});
   }
 
-  static Future<void> savePublicDetails(OwnerProfile details) async {
-    return firestore.collection(_publicDetailsCollection).doc(details.email).set(details.toPublicViewJson());
+  static Future<void> savePublicDetails(Profile details) async {
+    return firestore.collection(_publicDetailsCollection).doc(details.email).set(details.toJson());
   }
 
   static Future<void> savePrivateDetails(String email, PrivateDetails details) async {
@@ -67,5 +67,9 @@ class NetworkUtils{
 
   static Future<void> saveLocation(String email, Location location){
     return firestore.collection(_locationsCollection).doc(email).set(location.toJson());
+  }
+
+  static Future<void> updateMobile(String email, String newMobile) {
+    return firestore.collection(_privateDetailsCollection).doc(email).update({"mobile" : newMobile});
   }
 }
