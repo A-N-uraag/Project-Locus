@@ -1,3 +1,4 @@
+import 'package:ProjectLocus/utils/DBUtils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 enum UserState {
@@ -81,6 +82,7 @@ class AuthUtils{
   }
 
   static Future<void> signOut() async {
+    await DBUtils.clearData();
     await auth.signOut();
   }
 

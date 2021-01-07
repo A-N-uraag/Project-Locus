@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:ProjectLocus/pages/MapsPage.dart';
+import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -27,7 +28,9 @@ class HomePage extends StatelessWidget {
               heroTag: Random().nextInt(1000),
               child: Icon(Icons.favorite_outline_sharp),
               backgroundColor: Color(0xff33ffcc),
-              onPressed: (){
+              onPressed: () async {
+                await AuthUtils.signOut();
+                Navigator.pop(context);
                 print('You tapped on FloatingActionButton');
               },
             ),

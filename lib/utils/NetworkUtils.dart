@@ -48,6 +48,12 @@ class NetworkUtils{
     return profiles;
   }
 
+  static Future<PrivateDetails> getPrivateDetails(String email) async {
+    DocumentSnapshot result = await firestore.collection(_privateDetailsCollection).doc(email).get();
+    Map<String,dynamic> data = result.data();
+    return PrivateDetails.fromJson(data);
+  }
+
   static Future<List<Profile>> getFavouritesDetails(List<String> emails) async {
     QuerySnapshot profileList = await firestore.collection(_publicDetailsCollection).where('email',whereIn: emails).get();
     return profileList.docs.map((doc) => Profile.fromJson(doc.data())).toList();

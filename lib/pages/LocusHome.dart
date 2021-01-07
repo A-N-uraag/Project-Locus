@@ -1,3 +1,4 @@
+import 'package:ProjectLocus/pages/Favourties.dart';
 import 'package:ProjectLocus/pages/GivenAccess.dart';
 import 'package:ProjectLocus/pages/HasAccess.dart';
 import 'package:ProjectLocus/pages/homepage.dart';
@@ -32,7 +33,7 @@ class LocusHome extends StatelessWidget{
                 children: [
                   HomePage(),
                   HasAccess(),
-                  Center( child: Text("Favorites")),
+                  Favourites(),
                   GivenAccess(),
                   ProfileView()
                 ],

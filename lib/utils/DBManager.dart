@@ -26,13 +26,6 @@ class DBManager{
   static final emergencyEmail = 'Email';
   static final emergencyMobile = 'Mobile';
 
-  static final locationsTable = 'Locations';
-  static final locationsEmail = 'Email';
-  static final locationsLat = 'Latitude';
-  static final locationsLong = 'Longitude';
-  static final locationsTime = 'Time';
-  static final locationsDate = 'Date';
-
   static Database _db;
   Future<Database> get database async {
     if (_db != null) return _db;
@@ -52,6 +45,5 @@ class DBManager{
     await db.execute("CREATE TABLE $detailsTable ( $detailsEmail TEXT PRIMARY KEY, $detailsName TEXT NOT NULL, $detailsBio TEXT NOT NULL, $detailsMobile TEXT NOT NULL, $detailsPrivateMode TEXT NOT NULL)");
     await db.execute("CREATE TABLE $favouritesTable ( $favouritesEmail TEXT PRIMARY KEY, $favouritesName TEXT NOT NULL, $favouritesBio TEXT NOT NULL)");
     await db.execute("CREATE TABLE $emergencyTable ( $emergencyEmail TEXT PRIMARY KEY, $emergencyName TEXT NOT NULL, $emergencyMobile TEXT NOT NULL)");
-    await db.execute("CREATE TABLE $locationsTable ( $locationsEmail TEXT PRIMARY KEY, $locationsLat TEXT NOT NULL, $locationsLong TEXT NOT NULL, $locationsTime TEXT NOT NULL, $locationsDate TEXT NOT NULL)");
   }
 }

@@ -74,7 +74,7 @@ class _UserListState extends State<UserListView>{
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height*0.6,
             ),
-            child:SingleChildScrollView(
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children:  widget.users.map((user) => listTile(user)).toList()

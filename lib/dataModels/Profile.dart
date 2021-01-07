@@ -29,6 +29,15 @@ class OwnerProfile extends Profile{
     this.isPrivateModeOn
   ) : super(name, email, bio);
 
+  OwnerProfile.fromProfile(Profile user, String mobile):
+  mobile = mobile,
+  isPrivateModeOn = true,
+  super(user.name,user.email,user.bio);
+
+  Profile getProfile(){
+    return Profile(name,email,bio);
+  }
+
   Map<String,dynamic> toPublicViewJson() => {
     "name" : name,
     "email" : email,
@@ -69,7 +78,7 @@ class PrivateDetails{
   };
 
   PrivateDetails.fromJson(Map<String,dynamic> json):
-  mobile = json['mobile'],
-  favourites = json['favourites'],
-  emergencyList = (json['emergency'] as List<Map<String,dynamic>>).map((each) => EmergencyContact.fromJson(each)).toList();
+  mobile = json['mobile'].toString(),
+  favourites = (json['favourites'] as List<dynamic>).map((e) => e.toString()).toList(),
+  emergencyList = (json['emergency'] as List<dynamic>).map((each) => EmergencyContact.fromJson(each)).toList();
 }

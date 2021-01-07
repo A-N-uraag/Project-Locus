@@ -1,6 +1,9 @@
+import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/pages/EmailVerificationPage.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/pages/LocusHome.dart';
+import 'package:ProjectLocus/utils/DBUtils.dart';
+import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -17,6 +20,66 @@ class _UserSignInState extends State<UserSignInPage>{
   Widget msg;
   String _email;
   String _password;
+
+  Widget textFormField(String label){
+    return TextFormField(
+      decoration: InputDecoration(labelText: label),
+      obscureText: label == "Password",
+      validator: (value){
+        if(value.isEmpty){
+          return "Please enter your "+ label.toLowerCase();
+        }
+        return null;
+      },
+      onSaved:(value){
+        if(label == "Password"){
+          _password = value;
+        }
+        else{
+          _email = value;
+        }
+      },
+    );
+  }
+
+  Future<void> signIn() async {
+    this.setState(() {
+      showLoader = true;
+      showMsg = false;
+    });
+    await AuthUtils.signInWithEmail(_email, _password)
+    .then((value) async {
+      this.setState(() {
+        showLoader = false;
+        showMsg = true;
+        msg = Text("Successfully signed in! Redirecting...",style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),);
+      });
+      if( await AuthUtils.getUserState() == UserState.signed_in_and_verified){
+        Map<String, Profile> publicDetails = await NetworkUtils.getPublicProfiles(<String>[_email]);
+        PrivateDetails privateDetails = await NetworkUtils.getPrivateDetails(_email);
+        await DBUtils.insertDetails(OwnerProfile.fromProfile(publicDetails[_email], privateDetails.mobile));
+        Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) =>LocusHome()), 
+          (route) => false
+        );
+      }
+      else {
+        Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => EmailVerificationPage()), 
+          (route) => false
+        );
+      }
+    })
+    .catchError((e){
+      this.setState(() {
+        showLoader = false;
+        showMsg = true;
+        msg = Text("Oops... " + e.toString() + ". Try again",style: TextStyle(color: Colors.red, fontSize: 16),);
+      });
+    },test: (Object inp){
+      return true;
+    });
+  }
 
   @override
   Widget build(BuildContext context){
@@ -55,31 +118,8 @@ class _UserSignInState extends State<UserSignInPage>{
                       image: AssetImage('assets/locus.jpg'),
                     ),
                   ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Email ID"),
-                    validator: (value){
-                      if(value.isEmpty){
-                        return "Please enter an email id";
-                      }
-                      return null;
-                    },
-                    onSaved:(value){
-                      _email = value;
-                    },
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    decoration: InputDecoration(labelText: "Password"),
-                    validator: (value){
-                      if(value.isEmpty){
-                        return "Please enter a password";
-                      }
-                      return null;
-                    },
-                    onSaved:(value){
-                      _password = value;
-                    },
-                  ),
+                  textFormField("Email ID"),
+                  textFormField("Password"),
                   Container(
                     margin: EdgeInsets.only(top: 8),
                     child: RaisedButton(
@@ -89,37 +129,7 @@ class _UserSignInState extends State<UserSignInPage>{
                         if(_formKey.currentState.validate()) {
                           _formKey.currentState.save();
                           FocusScope.of(context).unfocus();
-                          this.setState(() {
-                            showLoader = true;
-                            showMsg = false;
-                          });
-                          await AuthUtils.signInWithEmail(_email, _password)
-                          .then((value) async {
-                            this.setState(() {
-                              showLoader = false;
-                              showMsg = true;
-                              msg = Text("Successfully signed in! Redirecting...",style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),);
-                            });
-                            if( await AuthUtils.getUserState() == UserState.signed_in_and_verified){
-                              Navigator.pushAndRemoveUntil(context,
-                                MaterialPageRoute(builder: (context) =>LocusHome()), 
-                                (route) => false
-                              );
-                            }
-                            else {
-                              Navigator.pushAndRemoveUntil(context,
-                                MaterialPageRoute(builder: (context) => EmailVerificationPage()), 
-                                (route) => false
-                              );
-                            }
-                          })
-                          .catchError((e){
-                            this.setState(() {
-                              showLoader = false;
-                              showMsg = true;
-                              msg = Text("Oops... " + e.toString() + ". Try again",style: TextStyle(color: Colors.red, fontSize: 16),);
-                            });
-                          },test: (Object inp){return true;});
+                          await signIn();
                         }
                       }
                     ),

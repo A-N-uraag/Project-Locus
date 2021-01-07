@@ -23,6 +23,94 @@ class _UserRegisterState extends State<UserRegisterPage>{
   String _bio;
   String _mobile;
 
+  String getErrorMsg(String label){
+    switch(label){
+      case "Name":{
+        return "Please enter your name";
+      }
+      case "Email ID":{
+        return "Please enter an email id";
+      }
+      case "Password":{
+        return "Please enter a password";
+      }
+      case "Bio":{
+        return "Please write a short bio about yourself";
+      }
+      case "Mobile":{
+        return "Please enter your mobile number";
+      }
+      default:{
+        return "This field must not be empty";
+      }
+    }
+  }
+
+  Widget textFormField(String label){
+    return TextFormField(
+      obscureText: label == "Password",
+      decoration: InputDecoration(labelText: label),
+      validator: (value){
+        if(value.isEmpty){
+          return getErrorMsg(label);
+        }
+        return null;
+      },
+      onSaved:(value){
+        switch(label){
+          case "Name":{
+            _name = value;
+            break;
+          }
+          case "Email ID":{
+            _email = value;
+            break;
+          }
+          case "Password":{
+            _password = value;
+            break;
+          }
+          case "Bio":{
+            _bio = value;
+            break;
+          }
+          case "Mobile":{
+            _mobile = value;
+            break;
+          }
+        }
+      },
+    );
+  }
+
+  Future<void> registerNewUser() async {
+    this.setState(() {
+      showLoader = true;
+      showMsg = false;
+    });
+    await AuthUtils.registerWithEmail(_email, _password)
+    .then((value) async {
+      OwnerProfile details = OwnerProfile(_name, _email, _bio, _mobile, false);
+      await DBUtils.insertDetails(details);
+      await NetworkUtils.savePublicDetails(details);
+      await NetworkUtils.savePrivateDetails(_email, PrivateDetails(_mobile,[],[]));
+      this.setState(() {
+        showLoader = false;
+        showMsg = true;
+        msg = Text("Successfully registered. A verification mail has been sent to your email id. Please complete the verification to continue.",
+          style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),
+        );
+      });
+    })
+    .catchError((e){
+      this.setState(() {
+        showLoader = false;
+        showMsg = true;
+        msg = Text("Oops... " + e.toString() + ". Try again",style: TextStyle(color: Colors.red, fontSize: 16),);
+      });
+    },test: (Object inp){return true;});
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -60,70 +148,11 @@ class _UserRegisterState extends State<UserRegisterPage>{
                       image: AssetImage('assets/locus.jpg'),
                     ),
                   ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Name"),
-                    validator: (value){
-                      if(value.isEmpty){
-                        return "Please enter your name";
-                      }
-                      return null;
-                    },
-                    onSaved:(value){
-                      _name = value;
-                    },
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Email ID"),
-                    validator: (value){
-                      if(value.isEmpty){
-                        return "Please enter an email id";
-                      }
-                      return null;
-                    },
-                    onSaved:(value){
-                      _email = value;
-                    },
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    decoration: InputDecoration(labelText: "Password"),
-                    validator: (value){
-                      if(value.isEmpty){
-                        return "Please enter a password";
-                      }
-                      return null;
-                    },
-                    onSaved:(value){
-                      _password = value;
-                    },
-                  ),
-                  TextFormField(
-                    keyboardType: TextInputType.multiline,
-                    minLines: 1,
-                    maxLines: 5,
-                    decoration: InputDecoration(labelText: "Bio"),
-                    validator: (value){
-                      if(value.isEmpty || value.length > 300){
-                        return "Please write a short bio about yourself";
-                      }
-                      return null;
-                    },
-                    onSaved:(value){
-                      _bio = value;
-                    },
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Mobile"),
-                    validator: (value){
-                      if(value.isEmpty){
-                        return "Please enter your mobile number";
-                      }
-                      return null;
-                    },
-                    onSaved:(value){
-                      _mobile = value;
-                    },
-                  ),
+                  textFormField("Name"),
+                  textFormField("Email ID"),
+                  textFormField("Password"),
+                  textFormField("Bio"),
+                  textFormField("Mobile"),
                   Container(
                     margin: EdgeInsets.only(top: 8),
                     child: RaisedButton(
@@ -133,31 +162,7 @@ class _UserRegisterState extends State<UserRegisterPage>{
                         if(_formKey.currentState.validate()) {
                           _formKey.currentState.save();
                           FocusScope.of(context).unfocus();
-                          this.setState(() {
-                            showLoader = true;
-                            showMsg = false;
-                          });
-                          await AuthUtils.registerWithEmail(_email, _password)
-                          .then((value) async {
-                            OwnerProfile details = OwnerProfile(_name, _email, _bio, _mobile, false);
-                            await DBUtils.insertDetails(details);
-                            await NetworkUtils.savePublicDetails(details);
-                            await NetworkUtils.savePrivateDetails(_email, PrivateDetails(_mobile,[],[]));
-                            this.setState(() {
-                              showLoader = false;
-                              showMsg = true;
-                              msg = Text("Successfully registered. A verification mail has been sent to your email id. Please complete the verification to continue.",
-                                style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),
-                              );
-                            });
-                          })
-                          .catchError((e){
-                            this.setState(() {
-                              showLoader = false;
-                              showMsg = true;
-                              msg = Text("Oops... " + e.toString() + ". Try again",style: TextStyle(color: Colors.red, fontSize: 16),);
-                            });
-                          },test: (Object inp){return true;});
+                          await registerNewUser();
                         }
                       }
                     ),
