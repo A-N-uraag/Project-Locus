@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
 
 class EditProfile extends StatefulWidget {
-
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -31,9 +30,8 @@ class _EditProfileState extends State<EditProfile> {
         break;
       default:
     }
-    var wid = Column(
-      children: [
-        Padding(
+    var wid = Column(children: [
+      Padding(
           padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
           child: new Row(
             mainAxisSize: MainAxisSize.max,
@@ -50,9 +48,8 @@ class _EditProfileState extends State<EditProfile> {
                 ],
               ),
             ],
-          )
-        ),
-        Padding(
+          )),
+      Padding(
           padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
           child: new Row(
             mainAxisSize: MainAxisSize.max,
@@ -77,40 +74,11 @@ class _EditProfileState extends State<EditProfile> {
                       default:
                     }
                   },
-                )
-              ),
-            ],
-          )
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
-          child: new Row(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              new Flexible(
-                child: new TextField(
-                  decoration: InputDecoration(hintText: hintText),
-                  onChanged: (text) {
-                    switch (label) {
-                      case "User Name":
-                        userUpdated.name = text;
-                        break;
-                      case "Email ID":
-                        userUpdated.email = text;
-                        break;
-                      case "Bio":
-                        userUpdated.bio = text;
-                        break;
-                      default:
-                    }
-                  },
                 ),
               ),
             ],
-          )
-        )
-      ]
-    );
+          ))
+    ]);
     return wid;
   }
 
