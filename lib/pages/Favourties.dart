@@ -48,6 +48,11 @@ class _FavouritesState extends State<Favourites>{
       ),
       barrierDismissible: true
     );
+    if(addedUsers != null){
+      Map<String,String> currentUser = AuthUtils.getCurrentUser();
+      await DBUtils.saveFavourites(addedUsers);
+      await NetworkUtils.saveFavourites(currentUser["email"].toString(), addedUsers.map((e) => e.email).toList());
+    }
   }
 
   @override 
@@ -58,7 +63,13 @@ class _FavouritesState extends State<Favourites>{
         if(snapshot.connectionState == ConnectionState.waiting){
           return Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: Container(
+                height: 100,
+                width: 100,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.black,
+                ),
+              )
             ),
           );
         }

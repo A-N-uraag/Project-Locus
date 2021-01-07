@@ -29,6 +29,20 @@ class DBUtils{
     )).toList();
   }
 
+  static Future<void> saveFavourites(List<Profile> favourites) async {
+    Database db = await DBManager().database;
+    Batch batch = db.batch();
+    favourites.forEach((element) {
+      Map<String,dynamic>row = {
+        DBManager.favouritesName : element.name,
+        DBManager.favouritesEmail : element.email,
+        DBManager.favouritesBio : element.bio
+      };
+      batch.insert(DBManager.favouritesTable, row, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    await batch.commit(noResult: true);
+  }
+
   static Future<List<EmergencyContact>> getEmergencyList() async {
     Database db = await DBManager().database;
     List<Map<String,dynamic>> results = await db.rawQuery("SELECT * FROM " + DBManager.emergencyTable, []);
@@ -39,6 +53,20 @@ class DBUtils{
         result[DBManager.emergencyMobile].toString()
       )
     ).toList();
+  }
+
+  static Future<void> saveEmergencyList(List<EmergencyContact> contacts) async {
+    Database db = await DBManager().database;
+    Batch batch = db.batch();
+    contacts.forEach((element) {
+      Map<String,dynamic> row = {
+        DBManager.emergencyName : element.name,
+        DBManager.emergencyEmail : element.email,
+        DBManager.emergencyMobile : element.mobile
+      };
+      batch.insert(DBManager.emergencyTable, row, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    await batch.commit(noResult: true);
   }
 
   static Future<int> insertDetails(OwnerProfile details) async{
@@ -78,52 +106,6 @@ class DBUtils{
   static Future<int> turnOffPrivateMode(OwnerProfile details) async {
     details.isPrivateModeOn = false;
     return await editDetails(details);
-  }
-
-  static Future<int> saveFavourite(Profile details) async {
-    Database db = await DBManager().database;
-    Map<String,dynamic>favouritesEntry = {
-      DBManager.favouritesEmail : details.email,
-      DBManager.favouritesName : details.name,
-      DBManager.favouritesBio : details.bio,
-    };
-    return await db.insert(
-      DBManager.favouritesTable, 
-      favouritesEntry, 
-      conflictAlgorithm: ConflictAlgorithm.replace
-    );
-  }
-
-  static Future<int> removeFavourite(String email) async {
-    Database db = await DBManager().database;
-    return await db.delete(
-      DBManager.favouritesTable, 
-      where: DBManager.favouritesEmail + "= ?",
-      whereArgs: [email]
-    );
-  }
-
-  static Future<int> saveEmergencyContact(EmergencyContact details) async {
-    Database db = await DBManager().database;
-    Map<String,dynamic> entry = {
-      DBManager.emergencyEmail : details.email,
-      DBManager.emergencyName : details.name,
-      DBManager.emergencyMobile : details.mobile
-    };
-    return await db.insert(
-      DBManager.emergencyTable, 
-      entry, 
-      conflictAlgorithm: ConflictAlgorithm.replace
-    );
-  }
-
-  static Future<int> removeEmergencyContact(String email) async {
-    Database db = await DBManager().database;
-    return await db.delete(
-      DBManager.emergencyTable, 
-      where: DBManager.emergencyEmail + "= ?",
-      whereArgs: [email]
-    );
   }
 
   static Future<int> clearData() async {

@@ -71,6 +71,10 @@ class NetworkUtils{
     return firestore.collection(_privateDetailsCollection).doc(email).set(details.toJson());
   }
 
+  static Future<void> saveFavourites(String email, List<String> emails) async {
+    return firestore.collection(_privateDetailsCollection).doc(email).update({"favourites" : emails});
+  }
+
   static Future<void> saveLocation(String email, Location location){
     return firestore.collection(_locationsCollection).doc(email).set(location.toJson());
   }

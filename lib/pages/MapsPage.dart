@@ -137,7 +137,13 @@ class _MapsPageState extends State<MapsPage>{
         builder: (BuildContext context, AsyncSnapshot<Map<String,Location>> snapshot){
           if(snapshot.connectionState == ConnectionState.waiting){
             return Center(
-              child: CircularProgressIndicator(),
+              child: Container(
+                height: 100,
+                width: 100,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.black,
+                ),
+              )
             );
           }
           return Container(

@@ -58,6 +58,11 @@ class _UserSignInState extends State<UserSignInPage>{
         Map<String, Profile> publicDetails = await NetworkUtils.getPublicProfiles(<String>[_email]);
         PrivateDetails privateDetails = await NetworkUtils.getPrivateDetails(_email);
         await DBUtils.insertDetails(OwnerProfile.fromProfile(publicDetails[_email], privateDetails.mobile));
+        await DBUtils.saveEmergencyList(privateDetails.emergencyList);
+        if(privateDetails.favourites.isNotEmpty){
+          Map<String,Profile> favourites = await NetworkUtils.getPublicProfiles(privateDetails.favourites);
+          await DBUtils.saveFavourites(favourites.values);
+        }
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) =>LocusHome()), 
           (route) => false
@@ -79,6 +84,67 @@ class _UserSignInState extends State<UserSignInPage>{
     },test: (Object inp){
       return true;
     });
+  }
+
+  Future<void> resetPassword(BuildContext context) async {
+    final key = GlobalKey<FormState>();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text("Reset Password"),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              Text("Please enter your email id below. A password reset link will be sent to your account."),
+              Form(
+                key: key,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Email"
+                  ),
+                  validator: (value){
+                    if(value.isEmpty){
+                      return "Please enter an email id";
+                    }
+                    return null;
+                  },
+                  onSaved: (resetEmail) async {
+                    this.setState(() {
+                      showLoader = true;
+                    });
+                    await AuthUtils.sendResetPasswordEmail(resetEmail).then((value){
+                      this.setState(() {
+                        showLoader = false;
+                        showMsg = true;
+                        msg = Text("Password resent mail sent...",style: TextStyle(color: Color(0xff33ffcc), fontSize: 16),);
+                      });
+                      Navigator.pop(context);
+                    }).catchError((error){
+                      this.setState(() {
+                        showLoader = false;
+                        showMsg = true;
+                        msg = Text("Oops... " + error.toString(),style: TextStyle(color: Colors.red, fontSize: 16),);
+                      });
+                      Navigator.pop(context);
+                    },test: (Object inp){return true;});
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text("Send verification mail", style: TextStyle(color: Color(0xff33ffcc)),),
+            onPressed: (){
+              if(key.currentState.validate()){
+                key.currentState.save();
+              }
+            }
+          )
+        ],
+      )
+    );
   }
 
   @override
@@ -121,7 +187,17 @@ class _UserSignInState extends State<UserSignInPage>{
                   textFormField("Email ID"),
                   textFormField("Password"),
                   Container(
-                    margin: EdgeInsets.only(top: 8),
+                    margin: EdgeInsets.only(top: 5),
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      child: Text("Forgot password?", textAlign: TextAlign.end, style: TextStyle(color: Color(0xff33ffcc)),),
+                      onPressed: () async {
+                        await resetPassword(context);
+                      }, 
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 5),
                     child: RaisedButton(
                       child: Text("Sign In", style: TextStyle(color: Colors.black,fontSize: 16),),
                       color: Color(0xff33ffcc),

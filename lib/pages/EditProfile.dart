@@ -134,9 +134,10 @@ class _EditProfileState extends State<EditProfile> {
               heroTag: "Edit",
               label: Text("Save"),
               icon: Icon(Icons.save),
-              onPressed: () {
-                NetworkUtils.savePublicDetails(userUpdated);
-                NetworkUtils.updateMobile(userMail, mobile);
+              onPressed: () async {
+                await DBUtils.insertDetails(userUpdated);
+                await NetworkUtils.savePublicDetails(userUpdated);
+                await NetworkUtils.updateMobile(userMail, mobile);
                 Navigator.pop(context);
               },
               backgroundColor: Color(0xff33ffcc),
