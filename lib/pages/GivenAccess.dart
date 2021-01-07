@@ -11,16 +11,6 @@ class _GivenAccessState extends State<GivenAccess> {
   static List<Profile> givenAccessList;
   var userMail = "trial1";
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Widget getGivenAccessList() {
     if (givenAccessList == null) {
       var component = new FutureBuilder(

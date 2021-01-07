@@ -2,6 +2,9 @@ import 'dart:math';
 
 import 'package:ProjectLocus/components/namecard.dart';
 import 'package:ProjectLocus/pages/EditProfile.dart';
+import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
+import 'package:ProjectLocus/pages/UserSignInPage.dart';
+import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
@@ -24,7 +27,7 @@ class ProfileView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: FloatingActionButton.extended(
-              heroTag: Random().nextInt(1000),
+              heroTag: Random().nextInt(100),
               onPressed: () {
                 // Add your onPressed code here!
               },
@@ -33,15 +36,28 @@ class ProfileView extends StatelessWidget {
               backgroundColor: Color(0xff33ffcc),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FloatingActionButton.extended(
+              heroTag: "Edit",
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile()));
+              },
+              label: Text("Edit"),
+              icon: Icon(Icons.edit),
+              backgroundColor: Color(0xff33ffcc),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        heroTag: Random().nextInt(1000),
+        heroTag: Random().nextInt(10),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile()));
+          AuthUtils.signOut();
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => EntryOptionsPage()), (route) => false);
         },
-        label: Text("Edit"),
-        icon: Icon(Icons.edit),
+        label: Text("Log Out"),
+        icon: Icon(Icons.logout),
         backgroundColor: Color(0xff33ffcc),
       ),
     );
