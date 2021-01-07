@@ -85,6 +85,7 @@ class _EditProfileState extends State<EditProfile> {
   Widget edit(user) {
     return Form(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           myTextField("User Name", user),
           myTextField("Email ID", user),
@@ -105,37 +106,44 @@ class _EditProfileState extends State<EditProfile> {
                 Navigator.pop(context);
               },
             ),
-            backgroundColor: Color(0xff33ffcc)
+            backgroundColor: Colors.grey[850]
         ),
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: new FutureBuilder(
-                future: DBUtils.getDetails(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<OwnerProfile> snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                        child: CircularProgressIndicator(
-                            backgroundColor: Colors.black));
-                  }
-                  OwnerProfile user = snapshot.data;
-                  userUpdated = new Profile(user.name, user.email, user.bio);
-                  mobile = user.mobile;
-                  return SingleChildScrollView(child: edit(user));
-                }),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center, 
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new FutureBuilder(
+                    future: DBUtils.getDetails(),
+                    builder: (BuildContext context, AsyncSnapshot<OwnerProfile> snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: CircularProgressIndicator()
+                        );
+                      }
+                      OwnerProfile user = snapshot.data;
+                      userUpdated = new Profile(user.name, user.email, user.bio);
+                      mobile = user.mobile;
+                      return edit(user);
+                    }
+                  ),
+            ),
+            FloatingActionButton.extended(
+              heroTag: "Edit",
+              label: Text("Save"),
+              icon: Icon(Icons.save),
+              onPressed: () {
+                NetworkUtils.savePublicDetails(userUpdated);
+                NetworkUtils.updateMobile(userMail, mobile);
+                Navigator.pop(context);
+              },
+              backgroundColor: Color(0xff33ffcc),
+            )
+          ])
           ),
-          FloatingActionButton.extended(
-            heroTag: "Edit",
-            label: Text("Save"),
-            icon: Icon(Icons.save),
-            onPressed: () {
-              NetworkUtils.savePublicDetails(userUpdated);
-              NetworkUtils.updateMobile(userMail, mobile);
-              Navigator.pop(context);
-            },
-            backgroundColor: Color(0xff33ffcc),
-          )
-        ]));
+        )
+      );
   }
 }

@@ -41,6 +41,11 @@ class _UserListState extends State<UserListView>{
         title: Text(user.name, style: TextStyle(color: isUserSelected ? Color(0xff33ffcc) : Colors.white),),
         subtitle: Text(user.email,style: TextStyle(color: isUserSelected ? Color(0xff33ffcc) : Colors.white70),),
         leading: CircularLetterTile(user.name,44,25),
+        isThreeLine: (widget.isCheckable && isUserSelected),
+        trailing: (widget.isCheckable && isUserSelected) ? Icon(
+          Icons.done,
+          color: Color(0xff33ffcc),
+        ) : null,
         onTap: (){
           widget.onTap(user);
           if(widget.isCheckable){
@@ -75,6 +80,7 @@ class _UserListState extends State<UserListView>{
               maxHeight: MediaQuery.of(context).size.height*0.6,
             ),
             child: SingleChildScrollView(
+              padding: EdgeInsets.only(top: 12),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children:  widget.users.map((user) => listTile(user)).toList()

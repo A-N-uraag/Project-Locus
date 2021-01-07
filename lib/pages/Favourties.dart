@@ -28,8 +28,26 @@ class _FavouritesState extends State<Favourites>{
     return await DBUtils.getFavourites();
   }
 
-  void addFavourites() {
-    
+  void addFavourites(BuildContext context) async {
+    List<Profile> addedUsers = await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text("Add favourites"),
+        content: UserListView(
+          hasAccess, 
+          (Profile user) => {},
+          isCheckable: true,
+          submitButtonTitle: "Add",
+          onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
+            List<String> newList = [];
+            selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
+            Navigator.pop(context,newList);
+          },
+          preSelectedUsers: favourites,
+        ),
+      ),
+      barrierDismissible: true
+    );
   }
 
   @override 
@@ -46,39 +64,31 @@ class _FavouritesState extends State<Favourites>{
         }
         favourites = snapshot.data;
         return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.grey[850],
+            title: Text("Your Favourites", style: TextStyle(fontSize: 20),),
+          ),
           body: Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
             margin: EdgeInsets.only(top:15),
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height*0.2,
-                  decoration: BoxDecoration(
-                    color: Color(0xff212121),
-                    border: Border(bottom: BorderSide(color: Color(0xff33ffcc)))
-                  ),
-                  child: Text("Your Favourites", style: TextStyle(fontSize: 20),),
-                ),
-                (favourites != null && favourites.isNotEmpty) ? UserListView(favourites, (Profile user){
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
-                    barrierDismissible: true
-                  );
-                }) : Center(
-                  child: Text("It looks like you haven't added any favourites"),
-                )
-              ],
-            ),
+            child: (favourites != null && favourites.isNotEmpty) ? UserListView(favourites, (Profile user){
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
+                barrierDismissible: true
+              );
+            }) : Center(
+              child: Text("It looks like you haven't added any favourites"),
+            )
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: FloatingActionButton.extended(
             backgroundColor: Color(0xff33ffcc),
-            child: Icon(
-              Icons.add,
+            icon: Icon(
+              Icons.group,
               color: Colors.black,
             ),
+            label: Text("Manage",style: TextStyle(color: Colors.black),),
             onPressed: null,
           ),
         );

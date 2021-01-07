@@ -24,9 +24,8 @@ class _HasAccessState extends State<HasAccess> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff33ffcc),
-        title: Text("Users visible to you", style: TextStyle(fontSize: 20, color: Colors.black),),
-        centerTitle: true,
+        backgroundColor: Colors.grey[850],
+        title: Text("Users visible to you", style: TextStyle(fontSize: 20),),
       ),
       body: new FutureBuilder(
         future: NetworkUtils.getHasAccess(userMail),
@@ -44,31 +43,33 @@ class _HasAccessState extends State<HasAccess> {
           }
           List<Profile> content = snapshot.data;
           return Container(
-            child: Column(
-              children: [
-                /*Container(
-                  alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height*0.15,
-                  decoration: BoxDecoration(
-                    color: Color(0xff212121),
-                    border: Border(bottom: BorderSide(color: Color(0xff33ffcc)))
-                  ),
-                  child: Text("Users visible to you", style: TextStyle(fontSize: 20),),
-                ),*/
-                Container(
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
-                  margin: EdgeInsets.only(top:15),
-                  child: (content != null && content.isNotEmpty) ? UserListView(content, (Profile user){
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
-                      barrierDismissible: true
-                    );
-                  }) : Center(
-                    child: Text("It looks like you do not have access to anyone's location"),
-                  ),
+            child: Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
+              child: (content != null && content.isNotEmpty) ? UserListView(content, (Profile user){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
+                  barrierDismissible: true
+                );
+              }) : Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Image(
+                        fit: BoxFit.fitWidth,
+                        image: AssetImage('assets/blueglobe.png'),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      width: MediaQuery.of(context).size.width*0.7,
+                      child: Text("Looks like none of your friends want to be seen.", style: TextStyle(fontSize: 17, color: Color.fromARGB(250, 0, 227, 229)), textAlign: TextAlign.center,),
+                    )
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         }

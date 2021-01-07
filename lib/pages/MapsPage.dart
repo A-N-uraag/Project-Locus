@@ -24,6 +24,7 @@ class _MapsPageState extends State<MapsPage>{
   Completer<GoogleMapController> _controller = Completer();
   List<Profile> _hasAccessList;
   Map<String,Location> locations;
+  Set<Marker> _markers;
 
   @override 
   void initState() {
@@ -49,14 +50,18 @@ class _MapsPageState extends State<MapsPage>{
         _hasAccessList = [];
       }
     }
+    _markers = await getMarkersfromLocations(locations);
     return locations;
   }
 
-  Set<Marker>getMarkersfromLocations(Map<String,Location> locations){
+  Future<Set<Marker>> getMarkersfromLocations(Map<String,Location> locations) async {
     Set<Marker> markers = {};
     if(locations != null && locations.isNotEmpty){
-      locations.forEach((key, value) {
+      locations.forEach((key, value) async {
+        String name = _profiles[key].name;
+        String letter = name.toUpperCase()[0];
         markers.add(Marker(
+          icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "assets/pins/"+letter+".png"),
           position: LatLng(value.latitude, value.longitude),
           markerId: MarkerId(key),
           infoWindow: InfoWindow(
@@ -141,7 +146,7 @@ class _MapsPageState extends State<MapsPage>{
               onMapCreated: (GoogleMapController controller){
                 _controller.complete(controller);
               },
-              markers: getMarkersfromLocations(snapshot.data),
+              markers: _markers,
               mapType: MapType.normal,
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
