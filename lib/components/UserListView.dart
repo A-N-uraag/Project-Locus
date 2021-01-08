@@ -5,11 +5,17 @@ import 'package:flutter/material.dart';
 class UserListView extends StatefulWidget{
   final bool isCheckable;
   final List<Profile> users;
+  final String emptyListMessage;
   final String submitButtonTitle;
   final void Function(Profile user) onTap;
   final void Function(List<Profile> users, Map<String,bool> selectedEmails) onSubmit;
   final List<Profile> preSelectedUsers;
-  UserListView(this.users, this.onTap, {this.isCheckable = false, this.submitButtonTitle = "Submit" , this.onSubmit, this.preSelectedUsers});
+  
+  UserListView(this.users, this.onTap, {
+    this.emptyListMessage = "No users available",
+    this.isCheckable = false, this.submitButtonTitle = "Submit" , 
+    this.onSubmit, this.preSelectedUsers}
+  );
 
   @override 
   _UserListState createState() => _UserListState();
@@ -79,13 +85,15 @@ class _UserListState extends State<UserListView>{
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height*0.6,
             ),
-            child: SingleChildScrollView(
+            child: (widget.users.isNotEmpty) ?  SingleChildScrollView(
               padding: EdgeInsets.only(top: 12),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children:  widget.users.map((user) => listTile(user)).toList()
               )
-            ) ,
+            ) : Center(
+              child: Text(widget.emptyListMessage),
+            )
           ),
           widget.isCheckable ? RaisedButton(
             color: Color(0xff33ffcc),

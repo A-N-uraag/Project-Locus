@@ -36,6 +36,7 @@ class _FavouritesState extends State<Favourites>{
         content: UserListView(
           hasAccess, 
           (Profile user) => {},
+          emptyListMessage: "Your list of visible users is empty. You can only add visible users under favourites",
           isCheckable: true,
           submitButtonTitle: "Save",
           onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
@@ -49,12 +50,14 @@ class _FavouritesState extends State<Favourites>{
       barrierDismissible: true
     );
     if(addedUsers != null){
-      Map<String,String> currentUser = AuthUtils.getCurrentUser();
       Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
-      favourites = addedProfiles.values.toList();
-      await DBUtils.saveFavourites(favourites);
+      List<String> removedFavourites = favourites.map((e) => e.email).toSet().difference(addedUsers.toSet()).toList();
+      await DBUtils.removeFavourites(removedFavourites);
+      await DBUtils.saveFavourites(addedProfiles.values.toList());
       await NetworkUtils.saveFavourites(currentUser["email"].toString(), addedUsers);
-      this.setState(() {});
+      this.setState(() {
+        favourites = addedProfiles.values.toList();
+      });
     }
   }
 
@@ -82,13 +85,16 @@ class _FavouritesState extends State<Favourites>{
           favourites = snapshot.data;
           return Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
-            child: (favourites != null && favourites.isNotEmpty) ? UserListView(favourites, (Profile user){
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
-                barrierDismissible: true
-              );
-            }) : Center(
+            child: (favourites != null && favourites.isNotEmpty) ? UserListView(
+              favourites, 
+              (Profile user){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
+                  barrierDismissible: true
+                );
+              },
+            ) : Center(
               child: Text("It looks like you haven't added any favourites"),
             )
           );

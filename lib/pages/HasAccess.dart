@@ -1,6 +1,7 @@
 import 'package:ProjectLocus/components/UserListView.dart';
 import 'package:ProjectLocus/components/namecard.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
+import 'package:ProjectLocus/pages/MapsPage.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
@@ -18,6 +19,39 @@ class _HasAccessState extends State<HasAccess> {
     Map<String,String> userData = AuthUtils.getCurrentUser();
     userMail = userData["email"].toString();
     super.initState();
+  }
+
+  Future<void> locate(BuildContext context, List<Profile> hasAccess) async {
+    List<String> toLocate = await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text("Choose users to locate"),
+        content: UserListView(
+          hasAccess,
+          (Profile user) => {},
+          isCheckable: true,
+          submitButtonTitle: "Locate",
+          emptyListMessage: "Your list of accessible users is empty",
+          onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
+            List<String> toLocate = [];
+            selectedUsers.forEach((key, value) {
+              if(value){
+                toLocate.add(key);
+              }
+            });
+            Navigator.pop(context,toLocate);
+          },
+        ),
+      ),
+      barrierDismissible: true,
+    );
+    if(toLocate != null){
+      Navigator.pushAndRemoveUntil(
+        context, 
+        MaterialPageRoute(builder: (context)=>MapsPage(toLocate)), 
+        (route) => false
+      );
+    }
   }
 
   @override
@@ -44,13 +78,16 @@ class _HasAccessState extends State<HasAccess> {
           List<Profile> content = snapshot.data;
           return Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
-            child: (content != null && content.isNotEmpty) ? UserListView(content, (Profile user){
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
-                barrierDismissible: true
-              );
-            }) : Center(
+            child: (content != null && content.isNotEmpty) ? UserListView(
+              content, 
+              (Profile user){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
+                  barrierDismissible: true
+                );
+              },
+            ) : Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -71,7 +108,20 @@ class _HasAccessState extends State<HasAccess> {
             ),
           );
         }
-      )
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Color(0xff33ffcc),
+        icon: Icon(
+          Icons.person_pin,
+          color: Colors.black,
+        ),
+        label: Text(
+          "Locate",
+          style: TextStyle(color: Colors.black),
+        ),
+        onPressed: () => null,
+      ),
     );
   }
 }

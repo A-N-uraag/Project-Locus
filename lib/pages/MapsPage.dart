@@ -87,6 +87,7 @@ class _MapsPageState extends State<MapsPage>{
           child:  UserListView(
             _hasAccessList, 
             (Profile user) => {},
+            emptyListMessage: "Your list of visible users is empty.",
             isCheckable: true,
             submitButtonTitle: "Save",
             preSelectedUsers: _profiles.values.toList(),
@@ -119,7 +120,8 @@ class _MapsPageState extends State<MapsPage>{
           ),
           child:  UserListView(
             _profiles.values.toList(), 
-            (Profile user) => Navigator.pop(context,user.email)
+            (Profile user) => Navigator.pop(context,user.email),
+            emptyListMessage: "There's no one else on the map. Add users first to move to their location"
           ),
         )
       ),

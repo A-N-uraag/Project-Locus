@@ -43,6 +43,14 @@ class DBUtils{
     await batch.commit(noResult: true);
   }
 
+  static Future<void> removeFavourites(List<String> oldFavourites) async {
+    if(oldFavourites.isNotEmpty){
+      Database db = await DBManager().database;
+      String whereArgs = oldFavourites.join("', '");
+      await db.execute("DELETE FROM " + DBManager.favouritesTable + " WHERE " + DBManager.favouritesEmail + " IN ('" +  whereArgs + "')");
+    }
+  }
+
   static Future<List<EmergencyContact>> getEmergencyList() async {
     Database db = await DBManager().database;
     List<Map<String,dynamic>> results = await db.rawQuery("SELECT * FROM " + DBManager.emergencyTable, []);

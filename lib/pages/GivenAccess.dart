@@ -29,6 +29,7 @@ class _GivenAccessState extends State<GivenAccess> {
         content: UserListView(
           allUsers, 
           (Profile user) => {},
+          emptyListMessage: "Oops something went wrong...",
           isCheckable: true,
           submitButtonTitle: "Save",
           onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
@@ -82,7 +83,7 @@ class _GivenAccessState extends State<GivenAccess> {
                   builder: (BuildContext context) => NameCard(user.name, user.email, user.bio),
                   barrierDismissible: true
                 );
-              }
+              },
             ): Center(
               child: Text("It looks like you don't wanna be seen! Whatcha doin'?"),
             )
