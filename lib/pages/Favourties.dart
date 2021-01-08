@@ -29,7 +29,7 @@ class _FavouritesState extends State<Favourites>{
   }
 
   void manageFavourites(BuildContext context) async {
-    List<Profile> addedUsers = await showDialog(
+    List<String> addedUsers = await showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text("Add favourites"),
@@ -41,7 +41,9 @@ class _FavouritesState extends State<Favourites>{
           onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
             List<String> newList = [];
             selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
+            print("Hello!");
             Navigator.pop(context,newList);
+            print("Hello!");
           },
           preSelectedUsers: favourites,
         ),
@@ -50,15 +52,18 @@ class _FavouritesState extends State<Favourites>{
     );
     if(addedUsers != null){
       Map<String,String> currentUser = AuthUtils.getCurrentUser();
-      await DBUtils.saveFavourites(addedUsers);
-      await NetworkUtils.saveFavourites(currentUser["email"].toString(), addedUsers.map((e) => e.email).toList());
+      Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
+      favourites = addedProfiles.values.toList();
+      await DBUtils.saveFavourites(favourites);
+      await NetworkUtils.saveFavourites(currentUser["email"].toString(), addedUsers);
+      this.setState(() {});
     }
   }
 
   @override 
   Widget build(BuildContext context){
     return FutureBuilder(
-      future: DBUtils.getFavourites(),
+      future: initialize(),
       builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot){
         if(snapshot.connectionState == ConnectionState.waiting){
           return Scaffold(
