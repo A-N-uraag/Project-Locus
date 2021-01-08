@@ -94,9 +94,16 @@ class _FavouritesState extends State<Favourites>{
                   barrierDismissible: true
                 );
               },
-            ) : Center(
-              child: Text("It looks like you haven't added any favourites"),
-            )
+            ) : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    fit: BoxFit.fitWidth,
+                        image: AssetImage('assets/favourites.png'),
+                  ),
+                  Center(child: Text("It looks like you don't have any favourites. Isn't there a special one?", textAlign: TextAlign.center,)),
+                ],
+              ),
           );
         }
       ),
@@ -107,7 +114,7 @@ class _FavouritesState extends State<Favourites>{
           Icons.group,
           color: Colors.black,
         ),
-        label: Text("Manage",style: TextStyle(color: Colors.black),),
+        label: Text("Manage",style: TextStyle(color: Colors.black,),),
         onPressed: () => manageFavourites(context),
       ),
     );
