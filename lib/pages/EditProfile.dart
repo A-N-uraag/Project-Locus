@@ -101,11 +101,12 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
         appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
+              icon: Icon(Icons.arrow_back,),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
+            title: Text("Edit your profile"),
             backgroundColor: Colors.grey[850]
         ),
         body: Center(
@@ -114,7 +115,7 @@ class _EditProfileState extends State<EditProfile> {
               mainAxisAlignment: MainAxisAlignment.center, 
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(bottom: 15),
                   child: new FutureBuilder(
                     future: DBUtils.getDetails(),
                     builder: (BuildContext context, AsyncSnapshot<OwnerProfile> snapshot) {

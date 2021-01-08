@@ -7,23 +7,23 @@ class CircularLetterTile extends StatelessWidget{
   CircularLetterTile(this.letter,this.size,this.textSize);
 
   Color getColor(String letter){
-    switch(letter[0]){
-      case "A" "H" "O" "U": {
+    switch(letter[0].toUpperCase()){
+      case "A": case "H": case "O": case "U": {
         return Colors.red;
       }
-      case "B" "I" "P" "W": {
+      case "B": case "I": case "P": case "W": {
         return Colors.blue;
       }
-      case "C" "J" "Q" "X":{
+      case "C": case "J": case "Q": case "X":{
         return Colors.pink;
       }
-      case "D" "K" "R" "Y":{
+      case "D": case "K": case "R": case "Y":{
         return Colors.purple;
       }
-      case "E" "L" "S" "Z":{
+      case "E": case "L": case "S": case "Z":{
         return Colors.orange;
       }
-      case "F" "M" "T":{
+      case "F": case "M": case "T":{
         return Colors.lightGreen;
       }
     }

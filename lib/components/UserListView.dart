@@ -38,10 +38,10 @@ class _UserListState extends State<UserListView>{
         borderRadius: BorderRadius.circular(5)
       ),
       child: ListTile(
+        key: Key(user.email),
         title: Text(user.name, style: TextStyle(color: isUserSelected ? Color(0xff33ffcc) : Colors.white),),
         subtitle: Text(user.email,style: TextStyle(color: isUserSelected ? Color(0xff33ffcc) : Colors.white70),),
         leading: CircularLetterTile(user.name,44,25),
-        isThreeLine: (widget.isCheckable && isUserSelected),
         trailing: (widget.isCheckable && isUserSelected) ? Icon(
           Icons.done,
           color: Color(0xff33ffcc),

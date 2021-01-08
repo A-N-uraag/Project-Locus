@@ -23,7 +23,7 @@ class _MapsPageState extends State<MapsPage>{
   Map<String,Profile> _profiles;
   Completer<GoogleMapController> _controller = Completer();
   List<Profile> _hasAccessList;
-  Map<String,Location> locations;
+  Map<String,Location> _locations;
   Set<Marker> _markers;
 
   @override 
@@ -32,16 +32,16 @@ class _MapsPageState extends State<MapsPage>{
     _profiles = {};
     _hasAccessList = [];
     _currentUserEmail = AuthUtils.getCurrentUser()["email"];
-    locations = {};
+    _locations = {};
     super.initState();
   }
 
   Future<Map<String,Location>> getLocations() async {
     _userLocation = await LocationUtils.getLocation();
-    locations = {};
+    _locations = {};
     _profiles = {};
     if(_emails != null){
-      locations = await NetworkUtils.getLocations(_emails);
+      _locations = await NetworkUtils.getLocations(_emails);
       _profiles = await NetworkUtils.getPublicProfiles(_emails);
     }
     if(_hasAccessList.isEmpty){
@@ -50,8 +50,8 @@ class _MapsPageState extends State<MapsPage>{
         _hasAccessList = [];
       }
     }
-    _markers = await getMarkersfromLocations(locations);
-    return locations;
+    _markers = await getMarkersfromLocations(_locations);
+    return _locations;
   }
 
   Future<Set<Marker>> getMarkersfromLocations(Map<String,Location> locations) async {
@@ -126,7 +126,15 @@ class _MapsPageState extends State<MapsPage>{
       barrierDismissible: true
     );
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newLatLng(LatLng(locations[email].latitude, locations[email].longitude)));
+    controller.animateCamera(CameraUpdate.newLatLng(LatLng(_locations[email].latitude, _locations[email].longitude)));
+  }
+
+  Widget bottomBarButtons(IconData icon, Function onTap){
+    return IconButton(
+      iconSize: 30,
+      icon: Icon(icon, color: Color(0xff33ffcc),), 
+      onPressed: () => onTap()
+    );
   }
 
   @override 
@@ -168,32 +176,22 @@ class _MapsPageState extends State<MapsPage>{
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              iconSize: 30,
-              icon: Icon(Icons.arrow_back, color: Color(0xff33ffcc),), 
-              onPressed: (){
-                Navigator.pop(context);
-              },
+            bottomBarButtons(
+              Icons.arrow_back, 
+              (){Navigator.pop(context);}
             ),
-            IconButton(
-              iconSize: 30,
-              icon: Icon(Icons.person_pin, color: Color(0xff33ffcc),), 
-              onPressed: (){
-                goToPosition(context);
-              },
+            bottomBarButtons(
+              Icons.person_pin, 
+              (){goToPosition(context);}
             ),
-            IconButton(
-              iconSize: 30,
-              icon: Icon(Icons.group, color: Color(0xff33ffcc),), 
-              onPressed: (){
-                manageUsers(context);
-              }
+            bottomBarButtons(
+              Icons.group, 
+              (){manageUsers(context);}
             ),
-             IconButton(
-              iconSize: 30,
-              icon: Icon(Icons.refresh, color: Color(0xff33ffcc),), 
-              onPressed: ()=>this.setState(() {})
-            ),
+            bottomBarButtons(
+              Icons.refresh, 
+              (){this.setState(() {});}
+            )
           ],
         ),
       ),

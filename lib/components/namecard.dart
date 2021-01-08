@@ -9,20 +9,18 @@ class NameCard extends StatelessWidget {
 
   Widget getRowElements(){
     if(mobile == "none"){
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children:[
-          Icon(Icons.email, size: 20,), 
-          Text(email)
-        ]
-      );
+      return Container();
     }
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(children: [Icon(Icons.phone, size: 20), Text(mobile)]),
-        Row(children:[Icon(Icons.email, size: 20,), Text(email)]),
-    ]);
+        Padding(
+          padding: EdgeInsets.only(right: 10),
+          child: Icon(Icons.phone, size: 20, color: Color(0xff33ffcc))
+        ), 
+        Text(mobile)
+      ]
+    );
   }
 
   @override
@@ -42,8 +40,22 @@ class NameCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Icon(Icons.person, color: Color(0xff33ffcc),),
-                Text(name),
+                Icon(
+                  Icons.account_circle,
+                  color: Color(0xff33ffcc),
+                  size: 30,
+                ),
+                Text(name, style: TextStyle(fontSize: 16),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:[
+                    Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: Icon(Icons.email, size: 20, color: Color(0xff33ffcc)),
+                    ), 
+                    Text(email)
+                  ]
+                ),
                 getRowElements(),
                 Text(bio)
               ],

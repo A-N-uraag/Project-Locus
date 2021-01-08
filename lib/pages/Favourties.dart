@@ -28,7 +28,7 @@ class _FavouritesState extends State<Favourites>{
     return await DBUtils.getFavourites();
   }
 
-  void addFavourites(BuildContext context) async {
+  void manageFavourites(BuildContext context) async {
     List<Profile> addedUsers = await showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -100,7 +100,7 @@ class _FavouritesState extends State<Favourites>{
               color: Colors.black,
             ),
             label: Text("Manage",style: TextStyle(color: Colors.black),),
-            onPressed: null,
+            onPressed: () => manageFavourites(context),
           ),
         );
       }
