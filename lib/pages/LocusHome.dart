@@ -35,7 +35,7 @@ class LocusHome extends StatelessWidget{
                   HasAccess(),
                   Favourites(),
                   GivenAccess(),
-                  ProfileView()
+                  Profile()
                 ],
               ),
             ),

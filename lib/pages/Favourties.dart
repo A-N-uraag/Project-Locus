@@ -29,15 +29,15 @@ class _FavouritesState extends State<Favourites>{
   }
 
   void manageFavourites(BuildContext context) async {
-    List<Profile> addedUsers = await showDialog(
+    List<String> addedUsers = await showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: Text("Add favourites"),
+        title: Text("Add or Remove favourites"),
         content: UserListView(
           hasAccess, 
           (Profile user) => {},
           isCheckable: true,
-          submitButtonTitle: "Add",
+          submitButtonTitle: "Save",
           onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
             List<String> newList = [];
             selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
@@ -50,19 +50,26 @@ class _FavouritesState extends State<Favourites>{
     );
     if(addedUsers != null){
       Map<String,String> currentUser = AuthUtils.getCurrentUser();
-      await DBUtils.saveFavourites(addedUsers);
-      await NetworkUtils.saveFavourites(currentUser["email"].toString(), addedUsers.map((e) => e.email).toList());
+      Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
+      favourites = addedProfiles.values.toList();
+      await DBUtils.saveFavourites(favourites);
+      await NetworkUtils.saveFavourites(currentUser["email"].toString(), addedUsers);
+      this.setState(() {});
     }
   }
 
   @override 
   Widget build(BuildContext context){
-    return FutureBuilder(
-      future: DBUtils.getFavourites(),
-      builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting){
-          return Scaffold(
-            body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[850],
+        title: Text("Your Favourites", style: TextStyle(fontSize: 20),),
+      ),
+      body: FutureBuilder(
+        future: initialize(),
+        builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return Center(
               child: Container(
                 height: 100,
                 width: 100,
@@ -70,18 +77,11 @@ class _FavouritesState extends State<Favourites>{
                   backgroundColor: Colors.black,
                 ),
               )
-            ),
-          );
-        }
-        favourites = snapshot.data;
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.grey[850],
-            title: Text("Your Favourites", style: TextStyle(fontSize: 20),),
-          ),
-          body: Container(
+            );
+          }
+          favourites = snapshot.data;
+          return Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
-            margin: EdgeInsets.only(top:15),
             child: (favourites != null && favourites.isNotEmpty) ? UserListView(favourites, (Profile user){
               showDialog(
                 context: context,
@@ -91,19 +91,19 @@ class _FavouritesState extends State<Favourites>{
             }) : Center(
               child: Text("It looks like you haven't added any favourites"),
             )
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton: FloatingActionButton.extended(
-            backgroundColor: Color(0xff33ffcc),
-            icon: Icon(
-              Icons.group,
-              color: Colors.black,
-            ),
-            label: Text("Manage",style: TextStyle(color: Colors.black),),
-            onPressed: () => manageFavourites(context),
-          ),
-        );
-      }
+          );
+        }
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Color(0xff33ffcc),
+        icon: Icon(
+          Icons.group,
+          color: Colors.black,
+        ),
+        label: Text("Manage",style: TextStyle(color: Colors.black),),
+        onPressed: () => manageFavourites(context),
+      ),
     );
   }
 }

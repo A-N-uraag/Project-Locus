@@ -10,15 +10,10 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  String userMail;
+  String userMail = AuthUtils.getCurrentUser()["email"].toString();
   static Profile userUpdated;
+  static OwnerProfile user;
   static String mobile;
-
-  @override
-  void initState(){
-    userMail = AuthUtils.getCurrentUser()["email"];
-    super.initState();
-  }
 
   Widget myTextField(String label, OwnerProfile user) {
     String hintText;
@@ -110,7 +105,7 @@ class _EditProfileState extends State<EditProfile> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back,),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, false);
               },
             ),
             title: Text("Edit your profile"),
@@ -131,7 +126,7 @@ class _EditProfileState extends State<EditProfile> {
                           child: CircularProgressIndicator()
                         );
                       }
-                      OwnerProfile user = snapshot.data;
+                      user = snapshot.data;
                       userUpdated = new Profile(user.name, user.email, user.bio);
                       mobile = user.mobile;
                       return edit(user);
@@ -146,7 +141,7 @@ class _EditProfileState extends State<EditProfile> {
                 await DBUtils.insertDetails(OwnerProfile.fromProfile(userUpdated, mobile));
                 await NetworkUtils.savePublicDetails(userUpdated);
                 await NetworkUtils.updateMobile(userMail, mobile);
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               },
               backgroundColor: Color(0xff33ffcc),
             )

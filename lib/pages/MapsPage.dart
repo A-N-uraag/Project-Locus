@@ -112,7 +112,7 @@ class _MapsPageState extends State<MapsPage>{
       context: context,
       builder: (BuildContext context) => AlertDialog(
         backgroundColor: Color(0xff212121),
-        title: Text("Move to Location..."),
+        title: Text("Go to Location..."),
         content: ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height*0.8
@@ -125,8 +125,10 @@ class _MapsPageState extends State<MapsPage>{
       ),
       barrierDismissible: true
     );
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newLatLng(LatLng(_locations[email].latitude, _locations[email].longitude)));
+    if(email != null && email.isNotEmpty){
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newLatLng(LatLng(_locations[email].latitude, _locations[email].longitude)));
+    }
   }
 
   Widget bottomBarButtons(IconData icon, Function onTap){
@@ -181,7 +183,7 @@ class _MapsPageState extends State<MapsPage>{
               (){Navigator.pop(context);}
             ),
             bottomBarButtons(
-              Icons.person_pin, 
+              Icons.person_search, 
               (){goToPosition(context);}
             ),
             bottomBarButtons(

@@ -11,12 +11,17 @@ class NetworkUtils{
   static final _givenAccessCollection = "location_given_access";
   static final _locationsCollection = "locations";
 
-  /*static Future<bool> checkConnection() async {
-    final result = await InternetAddress.lookup("bing.com").timeout(timeLimit);
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      return true;
+  static Future<bool> checkConnection() async {
+    try{
+      final result = await InternetAddress.lookup("bing.com").timeout(const Duration(seconds: 5));
+      if (result != null && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch(_){
+      return false;
     }
-  }*/
+    return false;
+  }
 
   static Future<Map<String,Location>> getLocations(List<String> emails) async {
     Map<String,Location> locations = {};
