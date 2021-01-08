@@ -5,7 +5,7 @@ Widget buttonIcon(IconData icon) {
     height: 60,
     width: 60,
     padding: EdgeInsets.all(4),
-    child: Icon(icon, color: Colors.black),
-    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(30)), color: Color(0xff33ffcc),)
+    child: Icon(icon, color: Color(0xff33ffcc)),
+    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(30)), color: Colors.black,)
   );
 }

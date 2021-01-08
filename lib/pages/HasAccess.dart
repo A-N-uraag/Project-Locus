@@ -60,6 +60,7 @@ class _HasAccessState extends State<HasAccess> {
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         title: Text("Users visible to you", style: TextStyle(fontSize: 20),),
+        centerTitle: true,
       ),
       body: new FutureBuilder(
         future: NetworkUtils.getHasAccess(userMail),

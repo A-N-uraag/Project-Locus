@@ -57,7 +57,8 @@ class _GivenAccessState extends State<GivenAccess> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
-        title: Text("Given Access List", style: TextStyle(fontSize: 20))
+        title: Text("Given Access List", style: TextStyle(fontSize: 20)),
+        centerTitle: true,
       ),
       body: FutureBuilder(
         future: initialize(),
@@ -85,7 +86,33 @@ class _GivenAccessState extends State<GivenAccess> {
                 );
               },
             ): Center(
-              child: Text("It looks like you don't wanna be seen! Whatcha doin'?"),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(bottom: 35),
+                    width: MediaQuery.of(context).size.width*0.6,
+                    height: MediaQuery.of(context).size.width*0.6,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xff212121),
+                      boxShadow: [                
+                        BoxShadow(
+                          color: Colors.blue.withAlpha(125),
+                          blurRadius: 45,
+                          spreadRadius: 15,
+                          offset: Offset(0, 0),
+                        )                       
+                      ]
+                    ),
+                    child: Image(
+                      fit: BoxFit.fitWidth,
+                      image: AssetImage('assets/inco.png'),
+                    ),
+                  ),
+                  Text("It looks like you don't wanna be seen! Whatcha doin'?", style: TextStyle(fontSize: 18), textAlign: TextAlign.center,),
+                ],
+              )
             )
           );
         }

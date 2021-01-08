@@ -67,6 +67,7 @@ class _FavouritesState extends State<Favourites>{
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         title: Text("Your Favourites", style: TextStyle(fontSize: 20),),
+        centerTitle: true,
       ),
       body: FutureBuilder(
         future: initialize(),
@@ -95,8 +96,17 @@ class _FavouritesState extends State<Favourites>{
                 );
               },
             ) : Center(
-              child: Text("It looks like you haven't added any favourites"),
-            )
+              child: Column(
+              mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image(
+                    fit: BoxFit.fitWidth,
+                        image: AssetImage('assets/favourites.png'),
+                  ),
+                  Center(child: Text("It looks like you don't have any favourites. Isn't there a special one?", textAlign: TextAlign.center,)),
+                ],
+              ),
+            ),
           );
         }
       ),
@@ -107,7 +117,7 @@ class _FavouritesState extends State<Favourites>{
           Icons.group,
           color: Colors.black,
         ),
-        label: Text("Manage",style: TextStyle(color: Colors.black),),
+        label: Text("Manage",style: TextStyle(color: Colors.black,),),
         onPressed: () => manageFavourites(context),
       ),
     );
