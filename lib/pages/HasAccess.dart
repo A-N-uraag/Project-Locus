@@ -13,6 +13,7 @@ class HasAccess extends StatefulWidget {
 
 class _HasAccessState extends State<HasAccess> {
   var userMail;
+  List<Profile> hasAccess;
 
   @override
   void initState() {
@@ -46,10 +47,9 @@ class _HasAccessState extends State<HasAccess> {
       barrierDismissible: true,
     );
     if(toLocate != null){
-      Navigator.pushAndRemoveUntil(
+      Navigator.push(
         context, 
         MaterialPageRoute(builder: (context)=>MapsPage(toLocate)), 
-        (route) => false
       );
     }
   }
@@ -75,11 +75,11 @@ class _HasAccessState extends State<HasAccess> {
               )
             );
           }
-          List<Profile> content = snapshot.data;
+          hasAccess = snapshot.data;
           return Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
-            child: (content != null && content.isNotEmpty) ? UserListView(
-              content, 
+            child: (hasAccess != null && hasAccess.isNotEmpty) ? UserListView(
+              hasAccess, 
               (Profile user){
                 showDialog(
                   context: context,
@@ -120,7 +120,7 @@ class _HasAccessState extends State<HasAccess> {
           "Locate",
           style: TextStyle(color: Colors.black),
         ),
-        onPressed: () => null,
+        onPressed: () => locate(context,hasAccess),
       ),
     );
   }

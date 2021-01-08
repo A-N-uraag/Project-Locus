@@ -10,7 +10,7 @@ class UserListView extends StatefulWidget{
   final void Function(Profile user) onTap;
   final void Function(List<Profile> users, Map<String,bool> selectedEmails) onSubmit;
   final List<Profile> preSelectedUsers;
-  
+
   UserListView(this.users, this.onTap, {
     this.emptyListMessage = "No users available",
     this.isCheckable = false, this.submitButtonTitle = "Submit" , 
@@ -91,7 +91,7 @@ class _UserListState extends State<UserListView>{
                 mainAxisSize: MainAxisSize.min,
                 children:  widget.users.map((user) => listTile(user)).toList()
               )
-            ) : Center(
+            ) : Container(
               child: Text(widget.emptyListMessage),
             )
           ),

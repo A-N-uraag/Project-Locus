@@ -121,7 +121,7 @@ class _MapsPageState extends State<MapsPage>{
           child:  UserListView(
             _profiles.values.toList(), 
             (Profile user) => Navigator.pop(context,user.email),
-            emptyListMessage: "There's no one else on the map. Add users first to move to their location"
+            emptyListMessage: "There's no one else on the map. Add users first, to move to their location"
           ),
         )
       ),

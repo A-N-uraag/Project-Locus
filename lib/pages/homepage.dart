@@ -6,14 +6,13 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<String> userMails = [AuthUtils.getCurrentUser()["email"].toString()];
     return Container(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text("Hey! Find your friends over here!",), 
-            VisitMap(userMails),
+            VisitMap([]),
             VisitFavourites(),
           ]
         )
