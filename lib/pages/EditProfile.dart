@@ -1,4 +1,5 @@
 import 'package:ProjectLocus/dataModels/Profile.dart';
+import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/utils/DBUtils.dart';
 import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
@@ -9,9 +10,15 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  String userMail = "mirexal820@cocyo.com";
+  String userMail;
   static Profile userUpdated;
   static String mobile;
+
+  @override
+  void initState(){
+    userMail = AuthUtils.getCurrentUser()["email"];
+    super.initState();
+  }
 
   Widget myTextField(String label, OwnerProfile user) {
     String hintText;
@@ -136,7 +143,7 @@ class _EditProfileState extends State<EditProfile> {
               label: Text("Save"),
               icon: Icon(Icons.save),
               onPressed: () async {
-                await DBUtils.insertDetails(userUpdated);
+                await DBUtils.insertDetails(OwnerProfile.fromProfile(userUpdated, mobile));
                 await NetworkUtils.savePublicDetails(userUpdated);
                 await NetworkUtils.updateMobile(userMail, mobile);
                 Navigator.pop(context);

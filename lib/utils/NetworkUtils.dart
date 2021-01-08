@@ -1,6 +1,7 @@
 import 'package:ProjectLocus/dataModels/Location.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 
 class NetworkUtils{
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -9,6 +10,13 @@ class NetworkUtils{
   static final _hasAccessCollection = "location_has_access";
   static final _givenAccessCollection = "location_given_access";
   static final _locationsCollection = "locations";
+
+  /*static Future<bool> checkConnection() async {
+    final result = await InternetAddress.lookup("bing.com").timeout(timeLimit);
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      return true;
+    }
+  }*/
 
   static Future<Map<String,Location>> getLocations(List<String> emails) async {
     Map<String,Location> locations = {};
