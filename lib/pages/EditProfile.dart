@@ -10,7 +10,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  String userMail = AuthUtils.getCurrentUser()["email"].toString();
+  String userMail = AuthUtils.getCurrentUser();
   static Profile userUpdated;
   static OwnerProfile user;
   static String mobile;

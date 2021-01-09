@@ -52,7 +52,7 @@ class EmailVerificationPage extends StatelessWidget{
                   ),
                   Container(
                     padding: EdgeInsets.all(10),
-                    child: Text("Welcome " + AuthUtils.getCurrentUser()["name"].toString() + " and thank you for using Locus. Your email id verification is pending. Please complete the verification to continue.",
+                    child: Text("Welcome " + AuthUtils.getCurrentUser() + " and thank you for using Locus. Your email id verification is pending. Please complete the verification to continue.",
                       style: TextStyle(fontSize: 18),
                       textAlign: TextAlign.center,
                     ),

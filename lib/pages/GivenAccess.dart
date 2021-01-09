@@ -12,7 +12,7 @@ class GivenAccess extends StatefulWidget {
 
 class _GivenAccessState extends State<GivenAccess> {
   static List<Profile> givenAccessList;
-  var userMail = AuthUtils.getCurrentUser()["email"].toString();
+  var userMail = AuthUtils.getCurrentUser();
   List<Profile> allUsers;
   Map<String,String> currentUser;
 
@@ -43,9 +43,9 @@ class _GivenAccessState extends State<GivenAccess> {
       barrierDismissible: true
     );
     if(addedUsers != null){
-      Map<String,String> currentUser = AuthUtils.getCurrentUser();
+      String currentUser = AuthUtils.getCurrentUser();
       Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
-      await NetworkUtils.saveGivenAccess(currentUser["email"].toString(), addedUsers);
+      await NetworkUtils.saveGivenAccess(currentUser, addedUsers);
       this.setState(() {
         givenAccessList = addedProfiles.values.toList();
       });
@@ -57,7 +57,7 @@ class _GivenAccessState extends State<GivenAccess> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
-        title: Text("Given Access List", style: TextStyle(fontSize: 20)),
+        title: Text("Users with access to your Location", style: TextStyle(fontSize: 20)),
         centerTitle: true,
       ),
       body: FutureBuilder(

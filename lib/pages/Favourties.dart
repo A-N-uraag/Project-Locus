@@ -15,7 +15,7 @@ class Favourites extends StatefulWidget{
 class _FavouritesState extends State<Favourites>{
   List<Profile> favourites;
   List<Profile> hasAccess;
-  Map<String,String> currentUser;
+  String currentUser;
 
   @override
   void initState() {
@@ -24,7 +24,7 @@ class _FavouritesState extends State<Favourites>{
   }
 
   Future<List<Profile>> initialize() async {
-    hasAccess = await NetworkUtils.getHasAccess(currentUser["email"].toString());
+    hasAccess = await NetworkUtils.getHasAccess(currentUser);
     return await DBUtils.getFavourites();
   }
 
@@ -54,7 +54,7 @@ class _FavouritesState extends State<Favourites>{
       List<String> removedFavourites = favourites.map((e) => e.email).toSet().difference(addedUsers.toSet()).toList();
       await DBUtils.removeFavourites(removedFavourites);
       await DBUtils.saveFavourites(addedProfiles.values.toList());
-      await NetworkUtils.saveFavourites(currentUser["email"].toString(), addedUsers);
+      await NetworkUtils.saveFavourites(currentUser, addedUsers);
       this.setState(() {
         favourites = addedProfiles.values.toList();
       });

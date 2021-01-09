@@ -10,15 +10,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapsPage extends StatefulWidget{
-  final List<String> emails;
-  MapsPage(this.emails);
+  final List<Profile> users;
+  MapsPage(this.users);
 
   _MapsPageState createState() => _MapsPageState();
 }
 
 class _MapsPageState extends State<MapsPage>{
   String _currentUserEmail; 
-  List<String> _emails;
   Position _userLocation;
   Map<String,Profile> _profiles;
   Completer<GoogleMapController> _controller = Completer();
@@ -28,10 +27,12 @@ class _MapsPageState extends State<MapsPage>{
 
   @override 
   void initState() {
-    _emails = widget.emails;
     _profiles = {};
+    widget.users.forEach((profile) { 
+      _profiles.addAll({profile.email : profile});
+    });
     _hasAccessList = [];
-    _currentUserEmail = AuthUtils.getCurrentUser()["email"];
+    _currentUserEmail = AuthUtils.getCurrentUser();
     _locations = {};
     super.initState();
   }
@@ -39,10 +40,8 @@ class _MapsPageState extends State<MapsPage>{
   Future<Map<String,Location>> getLocations() async {
     _userLocation = await LocationUtils.getLocation();
     _locations = {};
-    _profiles = {};
-    if(_emails != null){
-      _locations = await NetworkUtils.getLocations(_emails);
-      _profiles = await NetworkUtils.getPublicProfiles(_emails);
+    if(_profiles != null){
+      _locations = await NetworkUtils.getLocations(_profiles.values.map((e) => e.email).toList());
     }
     if(_hasAccessList.isEmpty){
       _hasAccessList = await NetworkUtils.getHasAccess(_currentUserEmail);
@@ -75,7 +74,7 @@ class _MapsPageState extends State<MapsPage>{
   }
 
   Future<void> manageUsers(BuildContext context) async {
-    List<String> newList = await showDialog(
+    List<Profile> newList = await showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         backgroundColor: Color(0xff212121),
@@ -92,8 +91,12 @@ class _MapsPageState extends State<MapsPage>{
             submitButtonTitle: "Save",
             preSelectedUsers: _profiles.values.toList(),
             onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
-              List<String> newList = [];
-              selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
+              List<Profile> newList = [];
+              users.forEach((user) {
+                if(selectedUsers[user.email]){
+                  newList.add(user);
+                }
+              });
               Navigator.pop(context,newList);
             },
           ),
@@ -103,7 +106,10 @@ class _MapsPageState extends State<MapsPage>{
     );
     if(newList != null){
       setState(() {
-        _emails = newList;
+        _profiles = {};
+        newList.forEach((user) {
+          _profiles.addAll({user.email : user});
+        });
       });
     }
   }

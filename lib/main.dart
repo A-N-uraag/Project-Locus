@@ -6,6 +6,7 @@ import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/pages/LocusHome.dart';
 import 'package:ProjectLocus/utils/BackgroundUtils.dart';
 import 'package:ProjectLocus/utils/LocationUtils.dart';
+import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -44,6 +45,20 @@ class LocusApp extends StatelessWidget {
     }
     else{
       await BackgroundUtils.scheduleBgFetchTask();
+    }
+    final connState = await NetworkUtils.checkConnection();
+    if(!connState){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("No Internet connection"),
+          content: Text("Please ensure that you are connected to a network in order use the facilities of this app"),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text("Ok", style: TextStyle(color: Color(0xff33ffcc)),))
+          ],
+        ),
+        barrierDismissible: true,
+      );
     }
     return await AuthUtils.getUserState();
   }

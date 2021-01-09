@@ -1,11 +1,14 @@
+import 'dart:io';
+
 import 'package:ProjectLocus/dataModels/Location.dart';
+import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
+import 'package:ProjectLocus/utils/DBUtils.dart';
 import 'package:ProjectLocus/utils/LocationUtils.dart';
 import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 
@@ -42,14 +45,17 @@ class BackgroundUtils{
       Position location = await LocationUtils.getLocation();
       await Firebase.initializeApp();
       if( await AuthUtils.getUserState() != UserState.signed_out){
-        Map<String,String> user = AuthUtils.getCurrentUser();
-        NetworkUtils.saveLocation(
-          user['email'].toString(), 
-          Location(location.latitude, 
-          location.longitude, 
-          location.timestamp.toLocal().hour.toString() +":"+ location.timestamp.toLocal().minute.toString() +":"+ location.timestamp.toLocal().second.toString(), 
-          location.timestamp.toLocal().day.toString() +":"+ location.timestamp.toLocal().month.toString() +":"+ location.timestamp.toLocal().year.toString())
-        );
+        OwnerProfile user = await DBUtils.getDetails();
+        if(!user.isPrivateModeOn){
+          String user = AuthUtils.getCurrentUser();
+          NetworkUtils.saveLocation(
+            user, 
+            Location(location.latitude, 
+            location.longitude, 
+            location.timestamp.toLocal().hour.toString() +":"+ location.timestamp.toLocal().minute.toString() +":"+ location.timestamp.toLocal().second.toString(), 
+            location.timestamp.toLocal().day.toString() +":"+ location.timestamp.toLocal().month.toString() +":"+ location.timestamp.toLocal().year.toString())
+          );
+        }
       }
       print("current position is " + location.latitude.toString() + " " + location.longitude.toString());
     }
@@ -59,7 +65,9 @@ class BackgroundUtils{
     await bgLocationUpdate();
     await AndroidAlarmManager.initialize();
     await scheduleAndroidBgTask();
-    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    await Future.delayed(const Duration(seconds: 5),(){
+      exit(0);
+    }); 
   }
 
   static Future<void> scheduleAndroidBgTask() async {

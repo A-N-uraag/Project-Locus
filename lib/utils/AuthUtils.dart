@@ -86,8 +86,8 @@ class AuthUtils{
     await auth.signOut();
   }
 
-  static Map<String,String> getCurrentUser(){
+  static String getCurrentUser(){
     User user = auth.currentUser;
-    return {"name": user.displayName, "email": user.email};
+    return user.email;
   }
 }

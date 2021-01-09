@@ -17,13 +17,13 @@ class _HasAccessState extends State<HasAccess> {
 
   @override
   void initState() {
-    Map<String,String> userData = AuthUtils.getCurrentUser();
-    userMail = userData["email"].toString();
+    String userData = AuthUtils.getCurrentUser();
+    userMail = userData;
     super.initState();
   }
 
   Future<void> locate(BuildContext context, List<Profile> hasAccess) async {
-    List<String> toLocate = await showDialog(
+    List<Profile> toLocate = await showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text("Choose users to locate"),
@@ -34,10 +34,10 @@ class _HasAccessState extends State<HasAccess> {
           submitButtonTitle: "Locate",
           emptyListMessage: "Your list of accessible users is empty",
           onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
-            List<String> toLocate = [];
-            selectedUsers.forEach((key, value) {
-              if(value){
-                toLocate.add(key);
+            List<Profile> toLocate = [];
+            users.forEach((user) {
+              if(selectedUsers[user.email]){
+                toLocate.add(user);
               }
             });
             Navigator.pop(context,toLocate);

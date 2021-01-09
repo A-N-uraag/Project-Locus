@@ -31,7 +31,7 @@ class OwnerProfile extends Profile{
 
   OwnerProfile.fromProfile(Profile user, String mobile):
   mobile = mobile,
-  isPrivateModeOn = true,
+  isPrivateModeOn = false,
   super(user.name,user.email,user.bio);
 
   Profile getProfile(){
