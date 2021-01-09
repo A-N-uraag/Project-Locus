@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:ProjectLocus/dataModels/Location.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
@@ -12,7 +13,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 
-class BackgroundUtils{
+class BackgroundUtils {
 
   static Future<void> scheduleBgFetchTask() async {
     BackgroundFetch.configure(BackgroundFetchConfig(
@@ -43,43 +44,48 @@ class BackgroundUtils{
   static Future<void> bgLocationUpdate() async {
     if(await LocationUtils.checkPermission()){
       Position location = await LocationUtils.getLocation();
-      await Firebase.initializeApp();
-      if( await AuthUtils.getUserState() != UserState.signed_out){
-        OwnerProfile user = await DBUtils.getDetails();
-        if(!user.isPrivateModeOn){
-          String user = AuthUtils.getCurrentUser();
-          NetworkUtils.saveLocation(
-            user, 
-            Location(location.latitude, 
-            location.longitude, 
-            location.timestamp.toLocal().hour.toString() +":"+ location.timestamp.toLocal().minute.toString() +":"+ location.timestamp.toLocal().second.toString(), 
-            location.timestamp.toLocal().day.toString() +":"+ location.timestamp.toLocal().month.toString() +":"+ location.timestamp.toLocal().year.toString())
-          );
+      if(await NetworkUtils.checkConnection()){
+        await Firebase.initializeApp();
+        if( await AuthUtils.getUserState() != UserState.signed_out){
+          OwnerProfile user = await DBUtils.getDetails();
+          if(!user.isPrivateModeOn){
+            String user = AuthUtils.getCurrentUser();
+            NetworkUtils.saveLocation(
+              user, 
+              Location(location.latitude, 
+              location.longitude, 
+              location.timestamp.toLocal().hour.toString() +":"+ location.timestamp.toLocal().minute.toString() +":"+ location.timestamp.toLocal().second.toString(), 
+              location.timestamp.toLocal().day.toString() +":"+ location.timestamp.toLocal().month.toString() +":"+ location.timestamp.toLocal().year.toString())
+            );
+          }
         }
       }
-      print("current position is " + location.latitude.toString() + " " + location.longitude.toString());
     }
   }
 
   static alarmManagerCallback() async {
-    await bgLocationUpdate();
     await AndroidAlarmManager.initialize();
     await scheduleAndroidBgTask();
+    await bgLocationUpdate();
     await Future.delayed(const Duration(seconds: 5),(){
       exit(0);
-    }); 
+    });
   }
 
   static Future<void> scheduleAndroidBgTask() async {
     DateTime datetime  = DateTime.now();
     await AndroidAlarmManager.oneShotAt(
-      datetime.add(Duration(minutes: 15)), 
-      Random().nextInt(100000), 
+      datetime.add(Duration(minutes: 5)), 
+      100000, 
       alarmManagerCallback,
       allowWhileIdle: true,
       exact: true,
       rescheduleOnReboot: true,
       wakeup: true,
     );
+  }
+
+  static Future<bool> cancelAndroidBgTask() async {
+    return await AndroidAlarmManager.cancel(100000);
   }
 }

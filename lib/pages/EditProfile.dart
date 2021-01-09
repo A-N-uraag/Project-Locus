@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
 import 'package:ProjectLocus/utils/DBUtils.dart';
@@ -134,7 +136,7 @@ class _EditProfileState extends State<EditProfile> {
                   ),
             ),
             FloatingActionButton.extended(
-              heroTag: "Edit",
+              heroTag: Random().nextInt(10),
               label: Text("Save"),
               icon: Icon(Icons.save),
               onPressed: () async {

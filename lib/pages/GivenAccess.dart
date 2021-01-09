@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ProjectLocus/components/UserListView.dart';
 import 'package:ProjectLocus/components/namecard.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
@@ -119,6 +121,7 @@ class _GivenAccessState extends State<GivenAccess> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: Random().nextInt(10),
         backgroundColor: Color(0xff33ffcc),
         icon: Icon(
           Icons.group,

@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:async';
 
 import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
 import 'package:ProjectLocus/pages/EmailVerificationPage.dart';
@@ -31,7 +33,36 @@ class Locus extends StatelessWidget {
   }
 }
 
-class LocusApp extends StatelessWidget {
+class LocusApp extends StatefulWidget {
+
+  @override 
+  LocusAppState createState() => LocusAppState();
+}
+
+class LocusAppState extends State<LocusApp> with WidgetsBindingObserver {
+  Isolate locationUpdater;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if(Platform.isAndroid){
+      if(state == AppLifecycleState.detached){
+        locationUpdater.kill(priority: Isolate.immediate);
+        await BackgroundUtils.scheduleAndroidBgTask();
+      }
+    }
+  }
 
   Future<UserState> initializeApp(BuildContext context) async {
     bool permission = await LocationUtils.checkPermission();
@@ -41,7 +72,7 @@ class LocusApp extends StatelessWidget {
     await Firebase.initializeApp();
     if(Platform.isAndroid){
       await AndroidAlarmManager.initialize();
-      await BackgroundUtils.scheduleAndroidBgTask();
+      await BackgroundUtils.cancelAndroidBgTask();
     }
     else{
       await BackgroundUtils.scheduleBgFetchTask();

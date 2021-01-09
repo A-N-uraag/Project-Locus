@@ -14,6 +14,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  OwnerProfile user;
 
   Widget currentUserNameCard() {
     return FutureBuilder(
@@ -28,7 +29,7 @@ class _ProfileState extends State<Profile> {
               backgroundColor: Colors.black,
             ),
           ));
-        OwnerProfile user = snapshot.data;
+        user = snapshot.data;
         return NameCard(user.name, user.email, user.bio, mobile: user.mobile);
       },
     );
@@ -64,44 +65,85 @@ class _ProfileState extends State<Profile> {
         title: Text("Settings"),
         centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Stack(
-            alignment: AlignmentDirectional.topEnd,
-            children: [
-              currentUserNameCard(),
-              IconButton(
-                padding: EdgeInsets.all(30),
-                icon: Icon(
-                  Icons.edit,
-                  color: Color(0xff33ffcc),
+      body: FutureBuilder(
+        future: DBUtils.getDetails(),
+        builder: (BuildContext context, AsyncSnapshot<OwnerProfile> snapshot) {
+          if (!snapshot.hasData){
+            return Center(
+              child: Container(
+                height: 100,
+                width: 100,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.black,
                 ),
-                onPressed: () async {
-                  final hasChanged = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile()));
-                  if(hasChanged == true){
-                    this.setState(() {});
-                  }
-                },
+              )
+            );
+          }
+          user = snapshot.data;
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                alignment: AlignmentDirectional.topEnd,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      boxShadow: [                
+                        BoxShadow(
+                          color: user.isPrivateModeOn ? Colors.purple.withAlpha(125) : Colors.blue.withAlpha(125),
+                          blurRadius: 45,
+                          spreadRadius: 5,
+                          offset: Offset(0, 0),
+                        )                       
+                      ]
+                    ),
+                    child: NameCard(user.name, user.email, user.bio, mobile: user.mobile),
+                  ),
+                  IconButton(
+                    padding: EdgeInsets.all(30),
+                    icon: Icon(
+                      Icons.edit,
+                      color: Color(0xff33ffcc),
+                    ),
+                    onPressed: () async {
+                      final hasChanged = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile()));
+                      if(hasChanged == true){
+                        this.setState(() {});
+                      }
+                    },
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: FloatingActionButton.extended(
+                  heroTag: Random().nextInt(100),
+                  onPressed: () {
+                    if(user.isPrivateModeOn){
+                      DBUtils.turnOffPrivateMode(user);
+                      setState(() {
+                        user.isPrivateModeOn = false;
+                      });
+                    }
+                    else{
+                      DBUtils.turnOnPrivateMode(user);
+                      setState(() {
+                        user.isPrivateModeOn = true;
+                      });
+                    }
+                  },
+                  label: Text("Turn Private Mode " + (user.isPrivateModeOn ? "Off" : "On")),
+                  icon: Icon(Icons.privacy_tip),
+                  backgroundColor: Color(0xff33ffcc),
+                ),
               ),
             ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FloatingActionButton.extended(
-              heroTag: Random().nextInt(100),
-              onPressed: () {
-                // Add your onPressed code here!
-              },
-              label: Text("Private Mode"),
-              icon: Icon(Icons.privacy_tip),
-              backgroundColor: Color(0xff33ffcc),
-            ),
-          ),
-        ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        heroTag: Random().nextInt(10),
+        heroTag: Random().nextInt(1000),
         onPressed: () async {
           if (await signOutConfirmation(context)) {
             AuthUtils.signOut();
