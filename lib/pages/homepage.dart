@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:ProjectLocus/components/buttonIcon.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/pages/MapsPage.dart';
 import 'package:ProjectLocus/utils/DBUtils.dart';
