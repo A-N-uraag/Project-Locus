@@ -20,7 +20,7 @@ class _MapsPageState extends State<MapsPage>{
   String _currentUserEmail; 
   Position _userLocation;
   Map<String,Profile> _profiles;
-  Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController _controller;
   List<Profile> _hasAccessList;
   Map<String,Location> _locations;
   Set<Marker> _markers;
@@ -127,15 +127,14 @@ class _MapsPageState extends State<MapsPage>{
           child:  UserListView(
             _profiles.values.toList(), 
             (Profile user) => Navigator.pop(context,user.email),
-            emptyListMessage: "There's no one else on the map. Add users first, to move to their location"
+            emptyListMessage: "There's no one else on the map. Add users to the map, in order to go to their location"
           ),
         )
       ),
       barrierDismissible: true
     );
     if(email != null && email.isNotEmpty){
-      final GoogleMapController controller = await _controller.future;
-      controller.animateCamera(CameraUpdate.newLatLng(LatLng(_locations[email].latitude, _locations[email].longitude)));
+      _controller.animateCamera(CameraUpdate.newLatLng(LatLng(_locations[email].latitude, _locations[email].longitude)));
     }
   }
 
@@ -168,7 +167,7 @@ class _MapsPageState extends State<MapsPage>{
             padding: EdgeInsets.only(top:MediaQuery.of(context).padding.top),
             child: GoogleMap(
               onMapCreated: (GoogleMapController controller){
-                _controller.complete(controller);
+                _controller = controller;
               },
               markers: _markers,
               mapType: MapType.normal,

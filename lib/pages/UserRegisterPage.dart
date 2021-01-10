@@ -83,6 +83,8 @@ class _UserRegisterState extends State<UserRegisterPage>{
     );
   }
 
+
+
   Future<void> registerNewUser() async {
     this.setState(() {
       showLoader = true;
@@ -92,8 +94,7 @@ class _UserRegisterState extends State<UserRegisterPage>{
     .then((value) async {
       OwnerProfile details = OwnerProfile(_name, _email, _bio, _mobile, false);
       await DBUtils.insertDetails(details);
-      await NetworkUtils.savePublicDetails(details);
-      await NetworkUtils.savePrivateDetails(_email, PrivateDetails(_mobile,[],[]));
+      await NetworkUtils.createNewUserDocs(details);
       this.setState(() {
         showLoader = false;
         showMsg = true;

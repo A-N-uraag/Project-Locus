@@ -56,7 +56,7 @@ class LocusAppState extends State<LocusApp>{
   static void isolateBgLocationUpdate(dynamic message){
     print("Starting isolate...");
     BackgroundUtils.bgLocationUpdate();
-    Timer.periodic(const Duration(seconds: 30), (timer) { 
+    Timer.periodic(const Duration(seconds: 45), (timer) { 
       print("isolate loc");
       BackgroundUtils.bgLocationUpdate();
     });

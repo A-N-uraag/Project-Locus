@@ -31,8 +31,8 @@ class HomePage extends StatelessWidget {
           children: [
             //buttonIcon(Icons.favorite_outline_sharp),
             FloatingActionButton.extended(
-              heroTag: Random().nextInt(10),
-              backgroundColor: Colors.black,
+              heroTag: Random().nextInt(1000),
+              backgroundColor: Colors.grey[900],
               onPressed: null, 
               icon: Icon(Icons.favorite, color: Color(0xff33ffcc),),
               label: Text("Locate Favourites", style: TextStyle(color: Color(0xff33ffcc)),)
@@ -44,14 +44,14 @@ class HomePage extends StatelessWidget {
             BoxShadow(
               color: Colors.blue.withAlpha(125),
               blurRadius: 45,
-              spreadRadius: 8,
-              offset: Offset(1, 0),
+              spreadRadius: 5,
+              offset: Offset(0, 0),
             ),
             BoxShadow(
               color: Colors.greenAccent.withAlpha(125),
               blurRadius: 45,
-              spreadRadius: 8,
-              offset: Offset(0, 1),
+              spreadRadius: 5,
+              offset: Offset(0, 0),
             )                       
           ],
           gradient: LinearGradient(colors: [
@@ -77,7 +77,6 @@ class HomePage extends StatelessWidget {
                         image: AssetImage('assets/locusLite.jpg'),
                       ),
             ),
-            Text("Hey! Find your friends over here!", ), 
             VisitMap(),
             visitFavouritesButton(context),
           ]
@@ -105,8 +104,8 @@ class VisitMap extends StatelessWidget {
           children: [
             //buttonIcon(Icons.map),
             FloatingActionButton.extended(
-              heroTag: Random().nextInt(10),
-              backgroundColor: Colors.black,
+              heroTag: Random().nextInt(10000),
+              backgroundColor: Colors.grey[900],
               onPressed: null, 
               icon: Icon(Icons.map, color: Color(0xff33ffcc),),
               label: Text("Visit your location", style: TextStyle(color: Color(0xff33ffcc)),)
@@ -118,7 +117,7 @@ class VisitMap extends StatelessWidget {
           BoxShadow(
             color: Colors.blue.withAlpha(125),
             blurRadius: 45,
-            spreadRadius: 15,
+            spreadRadius: 5,
             offset: Offset(0, 0),
           )                       
         ],

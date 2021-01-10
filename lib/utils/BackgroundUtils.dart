@@ -48,7 +48,7 @@ class BackgroundUtils {
       print("conn:" + conn.toString());
       if(conn){
         await Firebase.initializeApp();
-        if( await AuthUtils.getUserState() != UserState.signed_out){
+        if( await AuthUtils.getUserState() == UserState.signed_in_and_verified){
           OwnerProfile user = await DBUtils.getDetails();
           if(!user.isPrivateModeOn){
             String user = AuthUtils.getCurrentUser();
@@ -70,15 +70,12 @@ class BackgroundUtils {
     await AndroidAlarmManager.initialize();
     await scheduleAndroidBgTask();
     await bgLocationUpdate();
-    /*await Future.delayed(const Duration(seconds: 5),(){
-      exit(0);
-    });*/
   }
 
   static Future<void> scheduleAndroidBgTask() async {
     DateTime datetime  = DateTime.now();
     await AndroidAlarmManager.oneShotAt(
-      datetime.add(Duration(minutes: 5)), 
+      datetime.add(Duration(minutes: 15)), 
       100000, 
       alarmManagerCallback,
       allowWhileIdle: true,

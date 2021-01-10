@@ -37,11 +37,13 @@ class OwnerProfile extends Profile{
   Profile getProfile(){
     return Profile(name,email,bio);
   }
+  
 
-  Map<String,dynamic> toPublicViewJson() => {
+  Map<String,dynamic> toCloudFunctionJson() => {
     "name" : name,
     "email" : email,
     "bio" : bio,
+    "mobile": mobile
   };
 }
 

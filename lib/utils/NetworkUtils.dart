@@ -1,6 +1,7 @@
 import 'package:ProjectLocus/dataModels/Location.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:io';
 
 class NetworkUtils{
@@ -10,6 +11,12 @@ class NetworkUtils{
   static final _hasAccessCollection = "location_has_access";
   static final _givenAccessCollection = "location_given_access";
   static final _locationsCollection = "locations";
+
+  static Future<void> createNewUserDocs(OwnerProfile newUser) async {
+    FirebaseFunctions functions = FirebaseFunctions.instanceFor(region: 'asia-south1');
+    HttpsCallable callable = functions.httpsCallable('onUserAdd');
+    await callable.call(newUser.toCloudFunctionJson());
+  }
 
   static Future<bool> checkConnection() async {
     try{
