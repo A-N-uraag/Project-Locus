@@ -44,7 +44,9 @@ class BackgroundUtils {
   static Future<void> bgLocationUpdate() async {
     if(await LocationUtils.checkPermission()){
       Position location = await LocationUtils.getLocation();
-      if(await NetworkUtils.checkConnection()){
+      bool conn = await NetworkUtils.checkConnection();
+      print("conn:" + conn.toString());
+      if(conn){
         await Firebase.initializeApp();
         if( await AuthUtils.getUserState() != UserState.signed_out){
           OwnerProfile user = await DBUtils.getDetails();
@@ -61,15 +63,16 @@ class BackgroundUtils {
         }
       }
     }
+    print("Loc update");
   }
 
   static alarmManagerCallback() async {
     await AndroidAlarmManager.initialize();
     await scheduleAndroidBgTask();
     await bgLocationUpdate();
-    await Future.delayed(const Duration(seconds: 5),(){
+    /*await Future.delayed(const Duration(seconds: 5),(){
       exit(0);
-    });
+    });*/
   }
 
   static Future<void> scheduleAndroidBgTask() async {

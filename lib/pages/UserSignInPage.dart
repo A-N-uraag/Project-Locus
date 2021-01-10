@@ -59,10 +59,6 @@ class _UserSignInState extends State<UserSignInPage>{
         PrivateDetails privateDetails = await NetworkUtils.getPrivateDetails(_email);
         await DBUtils.insertDetails(OwnerProfile.fromProfile(publicDetails[_email], privateDetails.mobile));
         await DBUtils.saveEmergencyList(privateDetails.emergencyList);
-        if(privateDetails.favourites.isNotEmpty){
-          Map<String,Profile> favourites = await NetworkUtils.getPublicProfiles(privateDetails.favourites);
-          await DBUtils.saveFavourites(favourites.values.toList());
-        }
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) =>LocusHome()), 
           (route) => false

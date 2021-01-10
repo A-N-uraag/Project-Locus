@@ -17,40 +17,6 @@ class DBUtils{
     );
   }
 
-  static Future<List<Profile>> getFavourites() async {
-    Database db = await DBManager().database;
-    List<Map<String,dynamic>> results = await db.rawQuery(
-      "SELECT * FROM " + DBManager.favouritesTable, []
-    );
-    return results.map((result) => Profile(
-      result[DBManager.favouritesName].toString(),
-      result[DBManager.favouritesEmail].toString(),
-      result[DBManager.favouritesBio].toString()
-    )).toList();
-  }
-
-  static Future<void> saveFavourites(List<Profile> favourites) async {
-    Database db = await DBManager().database;
-    Batch batch = db.batch();
-    favourites.forEach((element) {
-      Map<String,dynamic>row = {
-        DBManager.favouritesName : element.name,
-        DBManager.favouritesEmail : element.email,
-        DBManager.favouritesBio : element.bio
-      };
-      batch.insert(DBManager.favouritesTable, row, conflictAlgorithm: ConflictAlgorithm.replace);
-    });
-    await batch.commit(noResult: true);
-  }
-
-  static Future<void> removeFavourites(List<String> oldFavourites) async {
-    if(oldFavourites.isNotEmpty){
-      Database db = await DBManager().database;
-      String whereArgs = oldFavourites.join("', '");
-      await db.execute("DELETE FROM " + DBManager.favouritesTable + " WHERE " + DBManager.favouritesEmail + " IN ('" +  whereArgs + "')");
-    }
-  }
-
   static Future<List<EmergencyContact>> getEmergencyList() async {
     Database db = await DBManager().database;
     List<Map<String,dynamic>> results = await db.rawQuery("SELECT * FROM " + DBManager.emergencyTable, []);
@@ -119,7 +85,6 @@ class DBUtils{
   static Future<int> clearData() async {
     Database db = await DBManager().database;
     await db.delete(DBManager.detailsTable);
-    await db.delete(DBManager.favouritesTable);
     return await db.delete(DBManager.emergencyTable);
   }
 }

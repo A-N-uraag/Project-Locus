@@ -2,17 +2,20 @@ import 'dart:math';
 
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/pages/MapsPage.dart';
-import 'package:ProjectLocus/utils/DBUtils.dart';
+import 'package:ProjectLocus/utils/AuthUtils.dart';
+import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
 
   void locateFavourites(BuildContext context) async {
-    List<Profile> favourites = await DBUtils.getFavourites();
+    String email = AuthUtils.getCurrentUser();
+    List<String> favouritesEmails = (await NetworkUtils.getPrivateDetails(email)).favourites;
+    Map<String,Profile> favourites = await NetworkUtils.getPublicProfiles(favouritesEmails);  
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => MapsPage(favourites)
+        builder: (BuildContext context) => MapsPage(favourites.values.toList())
       )
     );
   }

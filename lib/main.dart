@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:async';
 
 import 'package:ProjectLocus/pages/EntryOptionsPage.dart';
@@ -13,6 +12,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_isolate/flutter_isolate.dart';
 
 void main() {
   runApp(Locus());
@@ -39,29 +39,27 @@ class LocusApp extends StatefulWidget {
   LocusAppState createState() => LocusAppState();
 }
 
-class LocusAppState extends State<LocusApp> with WidgetsBindingObserver {
-  Isolate locationUpdater;
+class LocusAppState extends State<LocusApp>{
+  FlutterIsolate isolate;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+  void dispose() async {
+    isolate.kill();
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if(Platform.isAndroid){
-      if(state == AppLifecycleState.detached){
-        locationUpdater.kill(priority: Isolate.immediate);
-        await BackgroundUtils.scheduleAndroidBgTask();
-      }
-    }
+  static void isolateBgLocationUpdate(dynamic message){
+    print("Starting isolate...");
+    BackgroundUtils.bgLocationUpdate();
+    Timer.periodic(const Duration(seconds: 30), (timer) { 
+      print("isolate loc");
+      BackgroundUtils.bgLocationUpdate();
+    });
   }
 
   Future<UserState> initializeApp(BuildContext context) async {
@@ -69,10 +67,11 @@ class LocusAppState extends State<LocusApp> with WidgetsBindingObserver {
     if(!permission){
       await LocationUtils.getPermission(context);
     }
+    isolate = await FlutterIsolate.spawn(isolateBgLocationUpdate, "Start Isolate");
     await Firebase.initializeApp();
     if(Platform.isAndroid){
       await AndroidAlarmManager.initialize();
-      await BackgroundUtils.cancelAndroidBgTask();
+      await BackgroundUtils.scheduleAndroidBgTask();
     }
     else{
       await BackgroundUtils.scheduleBgFetchTask();
@@ -82,6 +81,7 @@ class LocusAppState extends State<LocusApp> with WidgetsBindingObserver {
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
+          backgroundColor: Colors.grey[850],
           title: Text("No Internet connection"),
           content: Text("Please ensure that you are connected to a network in order use the facilities of this app"),
           actions: [

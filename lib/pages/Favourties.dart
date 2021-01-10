@@ -4,7 +4,6 @@ import 'package:ProjectLocus/components/UserListView.dart';
 import 'package:ProjectLocus/components/namecard.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
-import 'package:ProjectLocus/utils/DBUtils.dart';
 import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +26,8 @@ class _FavouritesState extends State<Favourites>{
 
   Future<List<Profile>> initialize() async {
     hasAccess = await NetworkUtils.getHasAccess(currentUser);
-    return await DBUtils.getFavourites();
+    List<String> favouritesEmails = (await NetworkUtils.getPrivateDetails(currentUser)).favourites;
+    return (await NetworkUtils.getPublicProfiles(favouritesEmails)).values.toList();
   }
 
   void manageFavourites(BuildContext context) async {
@@ -53,9 +53,6 @@ class _FavouritesState extends State<Favourites>{
     );
     if(addedUsers != null){
       Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
-      List<String> removedFavourites = favourites.map((e) => e.email).toSet().difference(addedUsers.toSet()).toList();
-      await DBUtils.removeFavourites(removedFavourites);
-      await DBUtils.saveFavourites(addedProfiles.values.toList());
       await NetworkUtils.saveFavourites(currentUser, addedUsers);
       this.setState(() {
         favourites = addedProfiles.values.toList();
