@@ -22,11 +22,18 @@ exports.onGivenAccess = functions.region("asia-south1").firestore.document('/loc
     const removedUsers = oldData.filter((x) => !newData.includes(x));
     const addedUsers = newData.filter((x) => !oldData.includes(x));
     removedUsers.forEach(async (element) => {
-        var result = await admin.firestore().collection('location_has_access').doc(element).get();
-        if(result) {
-            var existingList = result.data()['accessible_users'];
+        var hasAccess = await admin.firestore().collection('location_has_access').doc(element).get();
+        if(hasAccess) {
+            var existingList = hasAccess.data()['accessible_users'];
             await admin.firestore().collection('location_has_access').doc(element).set({"accessible_users" : existingList.filter((x) => x !== context.params.documentId)});
         }
+
+        var privateDetails = await admin.firestore().collection('user_private_details').doc(element).get();
+        if(privateDetails) {
+            existingList = privateDetails.data()['favourites'];
+            await admin.firestore().collection('user_private_details').doc(element).update({"favourites" : existingList.filter((x) => x !== context.params.documentId)});
+        }
+        
     });
     addedUsers.forEach(async (element) => {
         var result = await admin.firestore().collection('location_has_access').doc(element).get();
