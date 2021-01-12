@@ -70,7 +70,11 @@ class _UserListState extends State<UserListView>{
     _selectedEmails = {};
     widget.users.forEach((profile) => _selectedEmails.addAll({profile.email : false}));
     if(widget.preSelectedUsers != null){
-      widget.preSelectedUsers.forEach((profile) => _selectedEmails.addAll({profile.email : true}));
+      widget.preSelectedUsers.forEach((profile){
+        if(_selectedEmails.containsKey(profile.email)){
+          _selectedEmails.addAll({profile.email : true});
+        }
+      });
     }
     super.initState();
   }
@@ -81,21 +85,19 @@ class _UserListState extends State<UserListView>{
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height*0.6,
-            ),
+          Container(
             child: (widget.users.isNotEmpty) ?  SingleChildScrollView(
               padding: EdgeInsets.only(top: 12),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children:  widget.users.map((user) => listTile(user)).toList()
-              )
+                children: widget.users.map((user) => listTile(user)).toList()
+              ),
             ) : Container(
-              child: Text(widget.emptyListMessage),
+              margin: EdgeInsets.all(15),
+              child: Text(widget.emptyListMessage,textAlign: TextAlign.center,),
             )
           ),
-          widget.isCheckable ? RaisedButton(
+          widget.isCheckable && widget.users.isNotEmpty ? RaisedButton(
             color: Color(0xff33ffcc),
             child: Text(widget.submitButtonTitle,style: TextStyle(color: Colors.black), textAlign: TextAlign.center,),
             onPressed: () => widget.onSubmit(widget.users,_selectedEmails)

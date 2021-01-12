@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:ProjectLocus/components/UserListView.dart';
+import 'package:ProjectLocus/components/UserSearch.dart';
 import 'package:ProjectLocus/components/namecard.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
 import 'package:ProjectLocus/utils/AuthUtils.dart';
@@ -8,12 +9,20 @@ import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
 
 class GivenAccess extends StatefulWidget {
+  static final instance = GivenAccess._internal();
+
+  GivenAccess._internal();
+
+  factory GivenAccess(){
+    return instance;
+  }
+
   @override
   _GivenAccessState createState() => _GivenAccessState();
 }
 
 class _GivenAccessState extends State<GivenAccess> {
-  static List<Profile> givenAccessList;
+  List<Profile> givenAccessList;
   var userMail = AuthUtils.getCurrentUser();
   List<Profile> allUsers;
   Map<String,String> currentUser;
@@ -24,25 +33,34 @@ class _GivenAccessState extends State<GivenAccess> {
   }
 
   void manageGivenAccess(BuildContext context) async {
-    List<String> addedUsers = await showDialog(
+    /*List<String> addedUsers = await showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: Text("Give or revoke Access"),
-        content: UserListView(
-          allUsers, 
-          (Profile user) => {},
-          emptyListMessage: "Oops something went wrong...",
-          isCheckable: true,
-          submitButtonTitle: "Save",
-          onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
-            List<String> newList = [];
-            selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
-            Navigator.pop(context,newList);
-          },
-          preSelectedUsers: givenAccessList,
-        ),
+        backgroundColor: Colors.grey[850],
+        contentPadding: EdgeInsets.all(10),
+        title: Text("Give or Revoke access"),
+        content: UserSearch(givenAccessList)
       ),
       barrierDismissible: true
+    );*/
+    List<String> addedUsers = await showModalBottomSheet(
+      context: context, 
+      builder: (BuildContext context) => Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Text("Give or Revoke access", style: TextStyle(color: Colors.white, fontSize: 20),),
+            ),
+            UserSearch(givenAccessList)
+          ],
+        ),
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))),
+      isDismissible: true,
+      isScrollControlled: true,
     );
     if(addedUsers != null){
       String currentUser = AuthUtils.getCurrentUser();
@@ -57,6 +75,7 @@ class _GivenAccessState extends State<GivenAccess> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         title: Text("Users with access to your Location", style: TextStyle(fontSize: 20)),

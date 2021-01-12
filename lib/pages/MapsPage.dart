@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:ProjectLocus/components/UserListView.dart';
 import 'package:ProjectLocus/dataModels/Location.dart';
 import 'package:ProjectLocus/dataModels/Profile.dart';
@@ -74,35 +75,46 @@ class _MapsPageState extends State<MapsPage>{
   }
 
   Future<void> manageUsers(BuildContext context) async {
-    List<Profile> newList = await showDialog(
+    List<Profile> newList = await showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        backgroundColor: Color(0xff212121),
-        title: Text("Add or remove people from the map"),
-        content: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height*0.8
-          ),
-          child:  UserListView(
-            _hasAccessList, 
-            (Profile user) => {},
-            emptyListMessage: "Your list of visible users is empty.",
-            isCheckable: true,
-            submitButtonTitle: "Save",
-            preSelectedUsers: _profiles.values.toList(),
-            onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
-              List<Profile> newList = [];
-              users.forEach((user) {
-                if(selectedUsers[user.email]){
-                  newList.add(user);
-                }
-              });
-              Navigator.pop(context,newList);
-            },
-          ),
-        )
+      builder: (BuildContext context) => Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Text("Add/Remove people from the map", style: TextStyle(color: Colors.white, fontSize: 20),),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height*0.6,
+              ),
+              child: UserListView(
+                _hasAccessList, 
+                (Profile user) => {},
+                emptyListMessage: "Your list of visible users is empty.",
+                isCheckable: true,
+                submitButtonTitle: "Save",
+                preSelectedUsers: _profiles.values.toList(),
+                onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
+                  List<Profile> newList = [];
+                  users.forEach((user) {
+                    if(selectedUsers[user.email]){
+                      newList.add(user);
+                    }
+                  });
+                  Navigator.pop(context,newList);
+                },
+              ),
+            )
+          ],
+        ),
       ),
-      barrierDismissible: true
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))),
+      isDismissible: true,
+      isScrollControlled: true,
     );
     if(newList != null){
       setState(() {
@@ -115,40 +127,61 @@ class _MapsPageState extends State<MapsPage>{
   }
 
   void goToPosition(BuildContext context) async {
-    String email = await showDialog(
+    String email = await showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        backgroundColor: Color(0xff212121),
-        title: Text("Go to Location..."),
-        content: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height*0.8
-          ),
-          child:  UserListView(
-            _profiles.values.toList(), 
-            (Profile user) => Navigator.pop(context,user.email),
-            emptyListMessage: "There's no one else on the map. Add users to the map, in order to go to their location"
-          ),
+      builder: (BuildContext context) => Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height*0.6,
+              ),
+              child: UserListView(
+                _profiles.values.toList(), 
+                (Profile user) => Navigator.pop(context,user.email),
+                emptyListMessage: "There's no one else on the map. Add users to the map, in order to go to their location"
+              ),
+            ),
+          ],
         )
       ),
-      barrierDismissible: true
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))),
+      isDismissible: true,
+      isScrollControlled: true
     );
     if(email != null && email.isNotEmpty){
       _controller.animateCamera(CameraUpdate.newLatLng(LatLng(_locations[email].latitude, _locations[email].longitude)));
     }
   }
 
-  Widget bottomBarButtons(IconData icon, Function onTap){
-    return IconButton(
-      iconSize: 30,
-      icon: Icon(icon, color: Color(0xff33ffcc),), 
-      onPressed: () => onTap()
+  Widget bottomBarButtons(IconData icon, String title,Function onTap){
+    return Padding(
+      padding: EdgeInsets.all(2),
+      child: TextButton.icon(
+        onPressed: () => onTap(), 
+        icon: Icon(icon, color: Color(0xff33ffcc),),
+        label: Text(title, style: TextStyle(color: Color(0xff33ffcc)),)
+      ),
     );
   }
 
   @override 
   Widget build(BuildContext context){
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
+      floatingActionButton: FloatingActionButton(
+        mini: true,
+        heroTag: Random().nextInt(10000),
+        backgroundColor: Color(0xff33ffcc),
+        child: Icon(Icons.arrow_back, color: Colors.black, size: 27),
+        onPressed: (){
+          Navigator.pop(context);
+        },
+      ),
       body: FutureBuilder(
         future: getLocations(),
         builder: (BuildContext context, AsyncSnapshot<Map<String,Location>> snapshot){
@@ -186,19 +219,15 @@ class _MapsPageState extends State<MapsPage>{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             bottomBarButtons(
-              Icons.arrow_back, 
-              (){Navigator.pop(context);}
-            ),
-            bottomBarButtons(
-              Icons.person_search, 
+              Icons.person_search, "View User",
               (){goToPosition(context);}
             ),
             bottomBarButtons(
-              Icons.group, 
+              Icons.group, "Add/Remove",
               (){manageUsers(context);}
             ),
             bottomBarButtons(
-              Icons.refresh, 
+              Icons.refresh, "Refresh",
               (){this.setState(() {});}
             )
           ],

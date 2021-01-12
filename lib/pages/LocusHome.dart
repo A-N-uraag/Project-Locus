@@ -17,6 +17,7 @@ class LocusHome extends StatelessWidget{
               brightness: Brightness.dark
             ),
             child: Scaffold(
+              resizeToAvoidBottomInset: false,
               bottomNavigationBar: TabBar(
                 tabs: [
                     Tab(icon: Icon(Icons.home,), text: "Home",),

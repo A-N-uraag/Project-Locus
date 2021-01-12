@@ -56,6 +56,7 @@ class NetworkUtils{
   }
 
   static Future<List<Profile>> getGivenAccess(String email) async {
+    print("Net Req");
     DocumentSnapshot result = await firestore.collection(_givenAccessCollection).doc(email).get();
     Map<String,dynamic> data = result.data();
     List<dynamic> userList = data['access_given_users'];
@@ -71,6 +72,21 @@ class NetworkUtils{
     Map<String,Profile> profiles = {};
     if(emails != null && emails.isNotEmpty){
       QuerySnapshot result = await firestore.collection(_publicDetailsCollection).where(FieldPath.documentId, whereIn: emails).get();
+      result.docs.forEach((doc) {
+        profiles.addAll({
+          doc.id : Profile.fromJson(doc.data())
+        });
+      });
+    }
+    return profiles;
+  }
+
+  static Future<Map<String,Profile>> searchUsersByName(String name) async {
+    Map<String,Profile> profiles = {};
+    if(name != null && name.trim().isNotEmpty){
+      QuerySnapshot result = await firestore.collection(_publicDetailsCollection)
+        .where('name', isGreaterThanOrEqualTo: name.trim())
+        .where('name',isLessThanOrEqualTo: name.trim() + 'zzz').get();
       result.docs.forEach((doc) {
         profiles.addAll({
           doc.id : Profile.fromJson(doc.data())

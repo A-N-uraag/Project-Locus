@@ -9,6 +9,14 @@ import 'package:flutter/material.dart';
 import '../utils/NetworkUtils.dart';
 
 class HasAccess extends StatefulWidget {
+  static final _instance = HasAccess._internal();
+
+  HasAccess._internal();
+
+  factory HasAccess(){
+    return _instance;
+  }
+
   @override
   _HasAccessState createState() => _HasAccessState();
 }
@@ -25,28 +33,45 @@ class _HasAccessState extends State<HasAccess> {
   }
 
   Future<void> locate(BuildContext context, List<Profile> hasAccess) async {
-    List<Profile> toLocate = await showDialog(
+    List<Profile> toLocate = await showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text("Choose users to locate"),
-        content: UserListView(
-          hasAccess,
-          (Profile user) => {},
-          isCheckable: true,
-          submitButtonTitle: "Locate",
-          emptyListMessage: "Your list of accessible users is empty",
-          onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
-            List<Profile> toLocate = [];
-            users.forEach((user) {
-              if(selectedUsers[user.email]){
-                toLocate.add(user);
-              }
-            });
-            Navigator.pop(context,toLocate);
-          },
+      builder: (BuildContext context) => Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Text("Choose user(s) to locate)", style: TextStyle(color: Colors.white, fontSize: 20),),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height*0.6,
+              ),
+              child:  UserListView(
+                hasAccess,
+                (Profile user) => {},
+                isCheckable: true,
+                submitButtonTitle: "Locate",
+                emptyListMessage: "Your list of accessible users is empty",
+                onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
+                  List<Profile> toLocate = [];
+                  users.forEach((user) {
+                    if(selectedUsers[user.email]){
+                      toLocate.add(user);
+                    }
+                  });
+                  Navigator.pop(context,toLocate);
+                },
+              ),
+            ),
+          ],
         ),
       ),
-      barrierDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))),
+      isDismissible: true,
+      isScrollControlled: true,
     );
     if(toLocate != null){
       Navigator.push(
@@ -59,6 +84,7 @@ class _HasAccessState extends State<HasAccess> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         title: Text("Users visible to you", style: TextStyle(fontSize: 20),),
@@ -104,7 +130,7 @@ class _HasAccessState extends State<HasAccess> {
                   Container(
                     margin: EdgeInsets.only(top: 20),
                     width: MediaQuery.of(context).size.width*0.7,
-                    child: Text("Looks like none of your friends want to be seen.", style: TextStyle(fontSize: 17, color: Color.fromARGB(250, 0, 227, 229)), textAlign: TextAlign.center,),
+                    child: Text("Looks like none of your friends want to be seen.", style: TextStyle(fontSize: 17,), textAlign: TextAlign.center,),
                   )
                 ],
               ),

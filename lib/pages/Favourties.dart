@@ -8,6 +8,13 @@ import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:flutter/material.dart';
 
 class Favourites extends StatefulWidget{
+  static final _instance = Favourites._internal();
+
+  Favourites._internal();
+
+  factory Favourites(){
+    return _instance;
+  } 
 
   @override 
   _FavouritesState createState() => _FavouritesState();
@@ -31,25 +38,42 @@ class _FavouritesState extends State<Favourites>{
   }
 
   void manageFavourites(BuildContext context) async {
-    List<String> addedUsers = await showDialog(
+    List<String> addedUsers = await showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text("Add or Remove favourites"),
-        content: UserListView(
-          hasAccess, 
-          (Profile user) => {},
-          emptyListMessage: "Your list of visible users is empty. You can only add visible users under favourites",
-          isCheckable: true,
-          submitButtonTitle: "Save",
-          onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
-            List<String> newList = [];
-            selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
-            Navigator.pop(context,newList);
-          },
-          preSelectedUsers: favourites,
+      builder: (BuildContext context) => Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Text("Add/Remove Favourites", style: TextStyle(color: Colors.white, fontSize: 20),),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height*0.6,
+              ),
+              child: UserListView(
+                hasAccess, 
+                (Profile user) => {},
+                emptyListMessage: "Your list of visible users is empty. You can only add visible users under favourites",
+                isCheckable: true,
+                submitButtonTitle: "Save",
+                onSubmit: (List<Profile> users, Map<String,bool> selectedUsers){
+                  List<String> newList = [];
+                  selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
+                  Navigator.pop(context,newList);
+                },
+                preSelectedUsers: favourites,
+              )
+            )
+          ],
         ),
       ),
-      barrierDismissible: true
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))),
+      isDismissible: true,
+      isScrollControlled: true,
     );
     if(addedUsers != null){
       Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
@@ -63,6 +87,7 @@ class _FavouritesState extends State<Favourites>{
   @override 
   Widget build(BuildContext context){
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
         title: Text("Your Favourites", style: TextStyle(fontSize: 20),),
@@ -102,7 +127,7 @@ class _FavouritesState extends State<Favourites>{
                     fit: BoxFit.fitWidth,
                         image: AssetImage('assets/favourites.png'),
                   ),
-                  Center(child: Text("It looks like you don't have any favourites. Isn't there a special one?", textAlign: TextAlign.center,)),
+                  Center(child: Text("It looks like you don't have any favourites. Isn't there a special one?", style: TextStyle(fontSize: 17), textAlign: TextAlign.center,)),
                 ],
               ),
             ),
