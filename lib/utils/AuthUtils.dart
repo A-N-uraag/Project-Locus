@@ -27,8 +27,8 @@ class AuthUtils{
     UserCredential userCredential;
     try {
       userCredential = await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password
+        email: email.trim(),
+        password: password.trim()
       );
     } on FirebaseAuthException catch (e) {
       return Future.error(e.code);

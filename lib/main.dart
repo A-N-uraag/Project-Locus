@@ -53,12 +53,17 @@ class LocusAppState extends State<LocusApp>{
     super.dispose();
   }
 
-  static void isolateBgLocationUpdate(dynamic message){
+  static void isolateBgLocationUpdate(dynamic message) async {
     print("Starting isolate...");
     BackgroundUtils.bgLocationUpdate();
     Timer.periodic(const Duration(seconds: 45), (timer) { 
       print("isolate loc");
       BackgroundUtils.bgLocationUpdate();
+    });
+    Timer.periodic(const Duration(minutes: 12), (timer) async { 
+      print("alarmMan pre");
+      await AndroidAlarmManager.initialize();
+      await BackgroundUtils.scheduleAndroidBgTask();
     });
   }
 
@@ -76,7 +81,7 @@ class LocusAppState extends State<LocusApp>{
     else{
       await BackgroundUtils.scheduleBgFetchTask();
     }
-    final connState = await NetworkUtils.checkConnection();
+    final connState = await NetworkUtils.checkConnection(7);
     if(!connState){
       showDialog(
         context: context,

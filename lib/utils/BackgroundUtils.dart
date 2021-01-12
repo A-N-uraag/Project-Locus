@@ -44,7 +44,7 @@ class BackgroundUtils {
   static Future<void> bgLocationUpdate() async {
     if(await LocationUtils.checkPermission()){
       Position location = await LocationUtils.getLocation();
-      bool conn = await NetworkUtils.checkConnection();
+      bool conn = await NetworkUtils.checkConnection(12);
       print("conn:" + conn.toString());
       if(conn){
         await Firebase.initializeApp();
@@ -70,6 +70,9 @@ class BackgroundUtils {
     await AndroidAlarmManager.initialize();
     await scheduleAndroidBgTask();
     await bgLocationUpdate();
+    Future.delayed(const Duration(seconds: 5),(){
+      exit(0);
+    });
   }
 
   static Future<void> scheduleAndroidBgTask() async {

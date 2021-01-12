@@ -23,6 +23,7 @@ class UserListView extends StatefulWidget{
 
 class _UserListState extends State<UserListView>{
   Map<String,bool> _selectedEmails;
+  final _scrollbarController = ScrollController();
 
   bool isSelected(String email){
     if(widget.isCheckable){
@@ -86,12 +87,16 @@ class _UserListState extends State<UserListView>{
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            child: (widget.users.isNotEmpty) ?  SingleChildScrollView(
-              padding: EdgeInsets.only(top: 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: widget.users.map((user) => listTile(user)).toList()
-              ),
+            child: (widget.users.isNotEmpty) ? Scrollbar(
+              isAlwaysShown: true,
+              controller: _scrollbarController,
+              child:  SingleChildScrollView(
+                padding: EdgeInsets.only(top: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.users.map((user) => listTile(user)).toList()
+                ),
+              )
             ) : Container(
               margin: EdgeInsets.all(15),
               child: Text(widget.emptyListMessage,textAlign: TextAlign.center,),

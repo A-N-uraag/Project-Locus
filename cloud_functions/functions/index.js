@@ -13,10 +13,6 @@ exports.onUserAdd = functions.region("asia-south1").https.onCall(async (data) =>
     const mobile = data.mobile;
     await admin.firestore().collection('user_public_details').doc(email).set({"name" : name, "email" : email, "bio" : bio});
     await admin.firestore().collection('user_private_details').doc(email).set({"mobile" : mobile, "emergency" : [], "favourites" : []});
-    const list = await admin.firestore().collection("user_public_details").get();
-    const count = list.docs.length.toString();
-    await admin.firestore().collection('user_private_details').doc("mirexal820@cocyo.com").update({"mobile" : count});
-    await admin.firestore().collection('user_private_details').doc("anuragreddy1000@gmail.com").update({"mobile" : count});
     return true;
 });
 

@@ -18,9 +18,9 @@ class NetworkUtils{
     await callable.call(newUser.toCloudFunctionJson());
   }
 
-  static Future<bool> checkConnection() async {
+  static Future<bool> checkConnection(int timeout) async {
     try{
-      final result = await InternetAddress.lookup("bing.com").timeout(const Duration(seconds: 5));
+      final result = await InternetAddress.lookup("bing.com").timeout(Duration(seconds: timeout));
       if (result != null && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         return true;
       }
@@ -56,7 +56,6 @@ class NetworkUtils{
   }
 
   static Future<List<Profile>> getGivenAccess(String email) async {
-    print("Net Req");
     DocumentSnapshot result = await firestore.collection(_givenAccessCollection).doc(email).get();
     Map<String,dynamic> data = result.data();
     List<dynamic> userList = data['access_given_users'];
