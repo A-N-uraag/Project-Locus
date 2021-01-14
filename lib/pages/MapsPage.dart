@@ -136,6 +136,10 @@ class _MapsPageState extends State<MapsPage>{
           children: [
             Container(
               padding: EdgeInsets.all(10),
+              child: Text("Go to ...", style: TextStyle(color: Colors.white, fontSize: 20),),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height*0.6,
               ),

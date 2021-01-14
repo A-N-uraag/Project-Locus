@@ -44,6 +44,7 @@ class _UserSearchState extends State<UserSearch>{
       color: Colors.grey[850],
       padding: EdgeInsets.all(15),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
           TextFormField(
@@ -62,7 +63,6 @@ class _UserSearchState extends State<UserSearch>{
             },
           ),
           Container(
-            alignment: Alignment.center,
             margin: EdgeInsets.only(top: 5, bottom: 10),
             child: Text("Please note that search is case sensitive", style: TextStyle(color: Colors.white70, fontSize: 12), textAlign: TextAlign.center,),
           ),

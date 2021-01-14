@@ -21,15 +21,23 @@ class HasAccess extends StatefulWidget {
   _HasAccessState createState() => _HasAccessState();
 }
 
-class _HasAccessState extends State<HasAccess> {
-  var userMail;
-  List<Profile> hasAccess;
+class _HasAccessState extends State<HasAccess> with AutomaticKeepAliveClientMixin {
+  String _userMail;
+  List<Profile> _hasAccess;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    String userData = AuthUtils.getCurrentUser();
-    userMail = userData;
+    _userMail = AuthUtils.getCurrentUser();
     super.initState();
+  }
+
+  Future<void> initialize() async {
+    if(_hasAccess == null){
+      _hasAccess = await NetworkUtils.getHasAccess(_userMail);
+    }
   }
 
   Future<void> locate(BuildContext context, List<Profile> hasAccess) async {
@@ -42,7 +50,7 @@ class _HasAccessState extends State<HasAccess> {
           children: [
             Container(
               padding: EdgeInsets.all(10),
-              child: Text("Choose user(s) to locate)", style: TextStyle(color: Colors.white, fontSize: 20),),
+              child: Text("Choose user(s) to locate", style: TextStyle(color: Colors.white, fontSize: 20),),
             ),
             Container(
               padding: EdgeInsets.all(10),
@@ -89,11 +97,22 @@ class _HasAccessState extends State<HasAccess> {
         backgroundColor: Colors.grey[850],
         title: Text("Users visible to you", style: TextStyle(fontSize: 20),),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: Colors.white70,), 
+            onPressed: () async {
+              final _newHasAccess = await NetworkUtils.getHasAccess(_userMail);
+              this.setState(() {
+                _hasAccess = _newHasAccess;
+              });
+            },
+          )
+        ],
       ),
-      body: new FutureBuilder(
-        future: NetworkUtils.getHasAccess(userMail),
-        builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot) {
-          if (!snapshot.hasData){
+      body:  FutureBuilder(
+        future: initialize(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting){
             return Center(
               child: Container(
                 height: 100,
@@ -104,11 +123,10 @@ class _HasAccessState extends State<HasAccess> {
               )
             );
           }
-          hasAccess = snapshot.data;
           return Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
-            child: (hasAccess != null && hasAccess.isNotEmpty) ? UserListView(
-              hasAccess, 
+            child: (_hasAccess != null && _hasAccess.isNotEmpty) ? UserListView(
+              _hasAccess, 
               (Profile user){
                 showDialog(
                   context: context,
@@ -150,7 +168,7 @@ class _HasAccessState extends State<HasAccess> {
           "Locate",
           style: TextStyle(color: Colors.black),
         ),
-        onPressed: () => locate(context,hasAccess),
+        onPressed: () => locate(context, _hasAccess),
       ),
     );
   }

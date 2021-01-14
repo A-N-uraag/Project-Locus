@@ -20,21 +20,26 @@ class Favourites extends StatefulWidget{
   _FavouritesState createState() => _FavouritesState();
 }
 
-class _FavouritesState extends State<Favourites>{
-  List<Profile> favourites;
-  List<Profile> hasAccess;
-  String currentUser;
+class _FavouritesState extends State<Favourites> with AutomaticKeepAliveClientMixin {
+  List<Profile> _favourites;
+  List<Profile> _hasAccess;
+  String _currentUser;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    currentUser = AuthUtils.getCurrentUser();
+    _currentUser = AuthUtils.getCurrentUser();
     super.initState();
   }
 
-  Future<List<Profile>> initialize() async {
-    hasAccess = await NetworkUtils.getHasAccess(currentUser);
-    List<String> favouritesEmails = (await NetworkUtils.getPrivateDetails(currentUser)).favourites;
-    return (await NetworkUtils.getPublicProfiles(favouritesEmails)).values.toList();
+  Future<void> initialize() async {
+    if(_favourites == null){
+      _hasAccess = await NetworkUtils.getHasAccess(_currentUser);
+      List<String> favouritesEmails = (await NetworkUtils.getPrivateDetails(_currentUser)).favourites;
+      _favourites = (await NetworkUtils.getPublicProfiles(favouritesEmails)).values.toList();
+    }
   }
 
   void manageFavourites(BuildContext context) async {
@@ -55,7 +60,7 @@ class _FavouritesState extends State<Favourites>{
                 maxHeight: MediaQuery.of(context).size.height*0.6,
               ),
               child: UserListView(
-                hasAccess, 
+                _hasAccess, 
                 (Profile user) => {},
                 emptyListMessage: "Your list of visible users is empty. You can only add visible users under favourites",
                 isCheckable: true,
@@ -65,7 +70,7 @@ class _FavouritesState extends State<Favourites>{
                   selectedUsers.forEach((key, value) {if(value){newList.add(key);}});
                   Navigator.pop(context,newList);
                 },
-                preSelectedUsers: favourites,
+                preSelectedUsers: _favourites,
               )
             )
           ],
@@ -77,9 +82,9 @@ class _FavouritesState extends State<Favourites>{
     );
     if(addedUsers != null){
       Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
-      await NetworkUtils.saveFavourites(currentUser, addedUsers);
+      await NetworkUtils.saveFavourites(_currentUser, addedUsers);
       this.setState(() {
-        favourites = addedProfiles.values.toList();
+        _favourites = addedProfiles.values.toList();
       });
     }
   }
@@ -92,10 +97,24 @@ class _FavouritesState extends State<Favourites>{
         backgroundColor: Colors.grey[850],
         title: Text("Your Favourites", style: TextStyle(fontSize: 20),),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: Colors.white70,), 
+            onPressed: () async {
+              final _newHasAccess = await NetworkUtils.getHasAccess(_currentUser);
+              List<String> favouritesEmails = (await NetworkUtils.getPrivateDetails(_currentUser)).favourites;
+              final _newfavourites = (await NetworkUtils.getPublicProfiles(favouritesEmails)).values.toList();
+              this.setState(() {
+                _hasAccess = _newHasAccess;
+                _favourites = _newfavourites;
+              });
+            },
+          )
+        ],
       ),
       body: FutureBuilder(
         future: initialize(),
-        builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot){
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot){
           if(snapshot.connectionState == ConnectionState.waiting){
             return Center(
               child: Container(
@@ -107,11 +126,11 @@ class _FavouritesState extends State<Favourites>{
               )
             );
           }
-          favourites = snapshot.data;
           return Container(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 15, bottom: 5),
-            child: (favourites != null && favourites.isNotEmpty) ? UserListView(
-              favourites, 
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 15, right: 5, bottom: 5),
+            alignment: Alignment.topCenter,
+            child: (_favourites != null && _favourites.isNotEmpty) ? UserListView(
+              _favourites, 
               (Profile user){
                 showDialog(
                   context: context,

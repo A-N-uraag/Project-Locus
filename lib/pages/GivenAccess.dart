@@ -21,40 +21,33 @@ class GivenAccess extends StatefulWidget {
   _GivenAccessState createState() => _GivenAccessState();
 }
 
-class _GivenAccessState extends State<GivenAccess> {
-  List<Profile> givenAccessList;
-  var userMail = AuthUtils.getCurrentUser();
-  List<Profile> allUsers;
-  Map<String,String> currentUser;
+class _GivenAccessState extends State<GivenAccess> with AutomaticKeepAliveClientMixin {
+  List<Profile> _givenAccessList;
+  String _userMail = AuthUtils.getCurrentUser();
 
-  Future<List<Profile>> initialize() async {
-    allUsers = await NetworkUtils.getAllUsers();
-    return await NetworkUtils.getGivenAccess(userMail);
+  @override
+  bool get wantKeepAlive => true;
+
+  Future<void> initialize() async {
+    if(_givenAccessList == null){
+      _givenAccessList = await NetworkUtils.getGivenAccess(_userMail);
+    }
   }
 
   void manageGivenAccess(BuildContext context) async {
-    /*List<String> addedUsers = await showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        backgroundColor: Colors.grey[850],
-        contentPadding: EdgeInsets.all(10),
-        title: Text("Give or Revoke access"),
-        content: UserSearch(givenAccessList)
-      ),
-      barrierDismissible: true
-    );*/
     List<String> addedUsers = await showModalBottomSheet(
       context: context, 
       builder: (BuildContext context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: EdgeInsets.all(10),
               child: Text("Give or Revoke access", style: TextStyle(color: Colors.white, fontSize: 20),),
             ),
-            UserSearch(givenAccessList)
+            UserSearch(_givenAccessList)
           ],
         ),
       ),
@@ -63,11 +56,10 @@ class _GivenAccessState extends State<GivenAccess> {
       isScrollControlled: true,
     );
     if(addedUsers != null){
-      String currentUser = AuthUtils.getCurrentUser();
       Map<String,Profile> addedProfiles = await NetworkUtils.getPublicProfiles(addedUsers);
-      await NetworkUtils.saveGivenAccess(currentUser, addedUsers);
+      await NetworkUtils.saveGivenAccess(_userMail, addedUsers);
       this.setState(() {
-        givenAccessList = addedProfiles.values.toList();
+        _givenAccessList = addedProfiles.values.toList();
       });
     }
   }
@@ -78,12 +70,23 @@ class _GivenAccessState extends State<GivenAccess> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
-        title: Text("Users with access to your Location", style: TextStyle(fontSize: 20)),
+        title: Text("Users that can view your Location", style: TextStyle(fontSize: 20)),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: Colors.white70,), 
+            onPressed: () async {
+              final newGivenAccessList = await NetworkUtils.getGivenAccess(_userMail);
+              this.setState((){
+                _givenAccessList = newGivenAccessList;
+              });
+            },
+          )
+        ],
       ),
       body: FutureBuilder(
         future: initialize(),
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return Center(
               child: Container(
@@ -92,13 +95,12 @@ class _GivenAccessState extends State<GivenAccess> {
                 child: CircularProgressIndicator(),
               )
             );
-          givenAccessList = snapshot.data;
           return Container(
             padding: EdgeInsets.only( top: MediaQuery.of(context).padding.top,
-              left: 15, right: 15, bottom: 5
+              left: 15, right: 5, bottom: 5
             ),
-            child: (givenAccessList != null && givenAccessList.isNotEmpty) ? UserListView(
-              givenAccessList, 
+            child: (_givenAccessList != null && _givenAccessList.isNotEmpty) ? UserListView(
+              _givenAccessList, 
               (Profile user) {
                 showDialog(
                   context: context,
