@@ -1,4 +1,4 @@
-package com.example.ProjectLocus
+package com.locus.ProjectLocus
 
 import io.flutter.embedding.android.FlutterActivity
 

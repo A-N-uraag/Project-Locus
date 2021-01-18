@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "434622082936-8slk7h4182su8ii2h2u55mr9pn06bcb7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ProjectLocus",
+            "certificate_hash": "6ebd4c0ac40877b56de568290e47497eeb31c8a8"
+          }
+        },
+        {
           "client_id": "434622082936-e5e3v2kiv26mfmdjbqbfkq0475m6g4tg.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,57 @@
             {
               "client_id": "434622082936-e5e3v2kiv26mfmdjbqbfkq0475m6g4tg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "434622082936-m8npojv4vh8lud8ftbh3q5jh2drbbisn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ProjectLocus"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434622082936:android:998be8ca5d5cff8297228d",
+        "android_client_info": {
+          "package_name": "com.locus.ProjectLocus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434622082936-5e505isgh1l1l107j2lfe4m7au3ob0bh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.locus.ProjectLocus",
+            "certificate_hash": "6ebd4c0ac40877b56de568290e47497eeb31c8a8"
+          }
+        },
+        {
+          "client_id": "434622082936-e5e3v2kiv26mfmdjbqbfkq0475m6g4tg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxiH20Ps1kHDMHrE6wtmKP835Lm2FIiNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434622082936-e5e3v2kiv26mfmdjbqbfkq0475m6g4tg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "434622082936-m8npojv4vh8lud8ftbh3q5jh2drbbisn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ProjectLocus"
+              }
             }
           ]
         }

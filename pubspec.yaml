@@ -33,6 +33,7 @@ dependencies:
   google_maps_flutter: ^1.0.6
   android_alarm_manager: ^0.4.5+17
   flutter_isolate: ^1.0.0+14
+  url_launcher: ^5.7.10
 
 
   # The following adds the Cupertino Icons font to your application.

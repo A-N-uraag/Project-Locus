@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class LocationUtils{
 
@@ -22,6 +24,34 @@ class LocationUtils{
   }
 
   static Future<void> getPermission(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        backgroundColor: Color(0xff303030),
+        title: Text("Requesting location access"),
+        content: Text("This app collects location data to enable the location sharing feature of the app, even when the app is closed or not in use."),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              const url = 'https://anuragreddy2000.github.io/LocusPolicy/';
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
+            }, 
+            child: Text("Privacy policy", style: TextStyle(color: Color(0xff33ffcc)),)
+          ),
+          TextButton(
+            onPressed: (){
+              Navigator.pop(context);
+            }, 
+            child: Text("Ok", style: TextStyle(color: Color(0xff33ffcc)),)
+          )
+        ],
+      ),
+      barrierDismissible: true,
+    );
     LocationPermission permission = await Geolocator.requestPermission();
     if (permission != LocationPermission.always && permission != LocationPermission.deniedForever){
       showDialog(
