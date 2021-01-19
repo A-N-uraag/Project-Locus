@@ -4,7 +4,7 @@ import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:flutter/material.dart';
 
 class UserSearch extends StatefulWidget{
-  List<Profile> givenAccess;
+  final List<Profile> givenAccess;
   UserSearch(this.givenAccess);
 
   @override 

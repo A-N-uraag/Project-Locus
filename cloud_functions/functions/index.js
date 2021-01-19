@@ -12,6 +12,7 @@ exports.onUserAdd = functions.region("asia-south1").https.onCall(async (data) =>
     const bio = data.bio;
     const mobile = data.mobile;
     await admin.firestore().collection('user_public_details').doc(email).set({"name" : name, "email" : email, "bio" : bio});
+    await admin.firestore().collection('location_given_access').doc(email).set({"access_given_users" : []});
     await admin.firestore().collection('user_private_details').doc(email).set({"mobile" : mobile, "emergency" : [], "favourites" : []});
     return true;
 });
