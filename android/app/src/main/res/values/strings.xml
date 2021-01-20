@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="CHANNEL_ID">com.locus.ProjectLocus.notification.channel</string>
+    <string name="channel_name">Locus background location update notification Channel</string>
+    <string name="channel_description">Channel to notify the user that the location is being updated in the background</string>
+</resources>

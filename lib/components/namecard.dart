@@ -34,7 +34,7 @@ class NameCard extends StatelessWidget {
             print('Card tapped.');
           },
           child: Container(
-            color: Color(0xff212121),
+            color: Colors.grey[850],
             width: MediaQuery.of(context).size.width / 1.1,
             height: MediaQuery.of(context).size.height / 3,
             child: Column(

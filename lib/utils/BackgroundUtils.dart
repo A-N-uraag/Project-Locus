@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 
 import 'package:ProjectLocus/dataModels/Location.dart';
@@ -8,10 +7,8 @@ import 'package:ProjectLocus/utils/DBUtils.dart';
 import 'package:ProjectLocus/utils/LocationUtils.dart';
 import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:background_fetch/background_fetch.dart';
-import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:math';
 
 class BackgroundUtils {
 
@@ -64,31 +61,5 @@ class BackgroundUtils {
       }
     }
     print("Loc update");
-  }
-
-  static alarmManagerCallback() async {
-    await AndroidAlarmManager.initialize();
-    await scheduleAndroidBgTask();
-    await bgLocationUpdate();
-    Future.delayed(const Duration(seconds: 5),(){
-      exit(0);
-    });
-  }
-
-  static Future<void> scheduleAndroidBgTask() async {
-    DateTime datetime  = DateTime.now();
-    await AndroidAlarmManager.oneShotAt(
-      datetime.add(Duration(minutes: 15)), 
-      100000, 
-      alarmManagerCallback,
-      allowWhileIdle: true,
-      exact: true,
-      rescheduleOnReboot: true,
-      wakeup: true,
-    );
-  }
-
-  static Future<bool> cancelAndroidBgTask() async {
-    return await AndroidAlarmManager.cancel(100000);
   }
 }

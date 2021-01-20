@@ -9,14 +9,22 @@ import 'package:ProjectLocus/utils/BackgroundUtils.dart';
 import 'package:ProjectLocus/utils/LocationUtils.dart';
 import 'package:ProjectLocus/utils/NetworkUtils.dart';
 import 'package:background_fetch/background_fetch.dart';
-import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 
 void main() {
   runApp(Locus());
   BackgroundFetch.registerHeadlessTask(BackgroundUtils.bgFetchCallback);
+}
+
+@pragma('vm:entry-point')
+void androidLocationUpdate() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await BackgroundUtils.bgLocationUpdate();
+  const platform = const MethodChannel("locus_app.location_service_channel");
+  platform.invokeMethod("stopForegroundService");
 }
 
 class Locus extends StatelessWidget {
@@ -60,11 +68,6 @@ class LocusAppState extends State<LocusApp>{
       print("isolate loc");
       BackgroundUtils.bgLocationUpdate();
     });
-    Timer.periodic(const Duration(minutes: 12), (timer) async { 
-      print("alarmMan pre");
-      await AndroidAlarmManager.initialize();
-      await BackgroundUtils.scheduleAndroidBgTask();
-    });
   }
 
   Future<UserState> initializeApp(BuildContext context) async {
@@ -75,8 +78,8 @@ class LocusAppState extends State<LocusApp>{
     isolate = await FlutterIsolate.spawn(isolateBgLocationUpdate, "Start Isolate");
     await Firebase.initializeApp();
     if(Platform.isAndroid){
-      await AndroidAlarmManager.initialize();
-      await BackgroundUtils.scheduleAndroidBgTask();
+      const platform = const MethodChannel("locus_app.android_alarm_channel");
+      platform.invokeMethod("scheduleLocationTask");
     }
     else{
       await BackgroundUtils.scheduleBgFetchTask();
