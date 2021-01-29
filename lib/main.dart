@@ -24,7 +24,7 @@ void androidLocationUpdate() async {
   WidgetsFlutterBinding.ensureInitialized();
   await BackgroundUtils.bgLocationUpdate();
   const platform = const MethodChannel("locus_app.location_service_channel");
-  platform.invokeMethod("stopForegroundService");
+  await platform.invokeMethod("stopForegroundService");
 }
 
 class Locus extends StatelessWidget {
@@ -71,7 +71,7 @@ class LocusAppState extends State<LocusApp>{
   }
 
   Future<UserState> initializeApp(BuildContext context) async {
-    bool permission = await LocationUtils.checkPermission();
+    bool permission = await LocationUtils.isLocationEnabled();
     if(!permission){
       await LocationUtils.getPermission(context);
     }

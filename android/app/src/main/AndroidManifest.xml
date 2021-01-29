@@ -80,6 +80,7 @@
         <service
             android:name=".LocationService"
             android:label="LocationService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false"/>
     </application>
 </manifest>

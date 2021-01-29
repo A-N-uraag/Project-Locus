@@ -39,7 +39,7 @@ class BackgroundUtils {
   }
 
   static Future<void> bgLocationUpdate() async {
-    if(await LocationUtils.checkPermission()){
+    if(await LocationUtils.canAccessLocationInBg()){
       Position location = await LocationUtils.getLocation();
       bool conn = await NetworkUtils.checkConnection(12);
       print("conn:" + conn.toString());

@@ -25,6 +25,7 @@ class _MapsPageState extends State<MapsPage>{
   List<Profile> _hasAccessList;
   Map<String,Location> _locations;
   Set<Marker> _markers;
+  LatLngBounds _bounds;
 
   @override 
   void initState() {
@@ -36,6 +37,14 @@ class _MapsPageState extends State<MapsPage>{
     _currentUserEmail = AuthUtils.getCurrentUser();
     _locations = {};
     super.initState();
+  }
+
+  @override
+  void dispose(){
+    if(_controller != null){
+      _controller.dispose();
+    }
+    super.dispose();
   }
 
   Future<Map<String,Location>> getLocations() async {
@@ -50,8 +59,25 @@ class _MapsPageState extends State<MapsPage>{
         _hasAccessList = [];
       }
     }
+    calculateBounds(_locations.values.toList());
     _markers = await getMarkersfromLocations(_locations);
     return _locations;
+  }
+
+  void calculateBounds(List<Location> locations){
+    _bounds = null;
+    if(locations.isNotEmpty && locations != null && locations.length > 1){
+      final lats = locations.map((e) => e.latitude);
+      final maxLat = lats.reduce(max);
+      final minLat = lats.reduce(min);
+      final longs = locations.map((e) => e.longitude);
+      final maxLong = longs.reduce(max);
+      final minLong = longs.reduce(min);
+      _bounds = LatLngBounds(
+        northeast: LatLng(maxLat, maxLong),
+        southwest: LatLng(minLat, minLong)
+      );
+    }
   }
 
   Future<Set<Marker>> getMarkersfromLocations(Map<String,Location> locations) async {
@@ -172,6 +198,19 @@ class _MapsPageState extends State<MapsPage>{
     );
   }
 
+  LatLng getCameraInitPosition(){
+    if(_locations == null || _locations.isEmpty){
+      return LatLng(_userLocation.latitude, _userLocation.longitude);
+    }
+    else{
+      if(_locations.length == 1){
+        final location = _locations.values.first;
+        return LatLng(location.latitude, location.longitude);
+      }
+    }
+    return LatLng(_userLocation.latitude, _userLocation.longitude);
+  }
+
   @override 
   Widget build(BuildContext context){
     return Scaffold(
@@ -200,11 +239,19 @@ class _MapsPageState extends State<MapsPage>{
               )
             );
           }
+          if(snapshot.hasError){
+            print(snapshot.error.toString());
+          }
           return Container(
             padding: EdgeInsets.only(top:MediaQuery.of(context).padding.top),
             child: GoogleMap(
-              onMapCreated: (GoogleMapController controller){
+              onMapCreated: (GoogleMapController controller) async {
                 _controller = controller;
+                if(_bounds != null){
+                  await _controller.animateCamera(
+                    CameraUpdate.newLatLngBounds(_bounds, 50)
+                  );
+                }
               },
               markers: _markers,
               mapType: MapType.normal,
@@ -212,7 +259,7 @@ class _MapsPageState extends State<MapsPage>{
               myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
                 zoom: 14,
-                target: LatLng(_userLocation.latitude, _userLocation.longitude)
+                target: getCameraInitPosition()
               ),
             ),
           );

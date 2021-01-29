@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 
 class RebootReceiver : BroadcastReceiver(){
 
@@ -13,11 +14,13 @@ class RebootReceiver : BroadcastReceiver(){
         if(intent!!.action == "android.intent.action.BOOT_COMPLETED"
                 || intent.action == "android.intent.action.QUICKBOOT_POWERON"
                 || intent.action == "android.intent.action.REBOOT"){
-            val jobInfo = JobInfo.Builder(25041997, ComponentName(context!!,LocationService::class.java))
-                    .setOverrideDeadline(0)
-                    .build()
-            val scheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-            scheduler.schedule(jobInfo)
+            val intent = Intent(context,LocationService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                context!!.startForegroundService(intent)
+            }
+            else{
+                context!!.startService(intent)
+            }
         }
     }
 }

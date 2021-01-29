@@ -45,6 +45,7 @@ class LocationService: Service(){
 
     private fun stopForegroundService(){
         stopForeground(true)
+        stopSelf()
     }
 
     private fun scheduleLocationTask(){
@@ -80,9 +81,9 @@ class LocationService: Service(){
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         if(!MainActivity.isActivityVisible){
-            System.exit(0)
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
+        super.onDestroy()
     }
 }

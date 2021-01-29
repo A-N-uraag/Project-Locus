@@ -11,7 +11,7 @@ class EntryOptionsPage extends StatelessWidget{
         child: Container(
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
-            color: Color(0xFF212121),
+            color: Color(0xFF303030),
             border: Border.all(color: Color(0xff33ffcc)),
             borderRadius: BorderRadius.all(Radius.circular(5))
           ),
@@ -25,31 +25,31 @@ class EntryOptionsPage extends StatelessWidget{
                 width: MediaQuery.of(context).size.width*0.9,
                 child: Image(
                   fit: BoxFit.fitWidth,
-                  image: AssetImage('assets/locus.jpg'),
+                  image: AssetImage('assets/locusLite.jpg'),
                 ),
               ),
               Container(
                 margin: EdgeInsets.only(bottom: 25),
-                child: Text("Welcome to Locus", style: TextStyle(fontSize: 24),),
+                child: Text("Welcome to Locus", style: TextStyle(fontSize: 23),),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  RaisedButton(
-                    color: Color(0xff33ffcc),
-                    textColor: Colors.black,
+                  FloatingActionButton.extended(
+                    heroTag: "register",
+                    backgroundColor: Color(0xff33ffcc),
                     onPressed: (){
                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => UserRegisterPage()));
                     },
-                    child: Text("REGISTER",style: TextStyle(fontSize: 16),),
+                    label: Text("Register",style: TextStyle(fontSize: 16, color: Colors.black,),),
                   ),
-                  RaisedButton(
-                    color: Color(0xff33ffcc),
-                    textColor: Colors.black,
+                  FloatingActionButton.extended(
+                    heroTag: "siingnin",
+                    backgroundColor: Color(0xff33ffcc),
                     onPressed: (){
                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => UserSignInPage()));
                     },
-                    child: Text("SIGN IN", style: TextStyle(fontSize: 16),),
+                    label: Text("Sign In",style: TextStyle(fontSize: 16, color: Colors.black,),),
                   )
                 ],
               )

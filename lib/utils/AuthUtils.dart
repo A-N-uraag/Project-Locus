@@ -39,11 +39,23 @@ class AuthUtils{
 
   static Future<void> sendEmailVerification() async {
     User user = auth.currentUser;
-    await user.sendEmailVerification();
+    var acs = ActionCodeSettings(
+      url: "https://anuragreddy2000.github.io/LocusPolicy/thankyou.html",
+      iOSBundleId: "com.example.ProjectLocus",
+      androidPackageName: "com.locus.ProjectLocus",
+      androidInstallApp: false,      
+    ); 
+    await user.sendEmailVerification(acs);
   }
 
   static Future<void> sendResetPasswordEmail(String email) async {
-    await auth.sendPasswordResetEmail(email: email);
+    var acs = ActionCodeSettings(
+      url: "https://anuragreddy2000.github.io/LocusPolicy/thankyou.html",
+      iOSBundleId: "com.example.ProjectLocus",
+      androidPackageName: "com.locus.ProjectLocus",
+      androidInstallApp: false,      
+    ); 
+    await auth.sendPasswordResetEmail(email: email, actionCodeSettings: acs);
   }
 
   static Future<bool> updateUserPassword(String newPassword) async {

@@ -146,15 +146,10 @@ class _UserSignInState extends State<UserSignInPage>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-      floatingActionButton: FloatingActionButton(
-        heroTag: Random().nextInt(1000),
-        backgroundColor: Colors.transparent,
-        child: Icon(
-          Icons.close,
-          color:  Color(0xff33ffcc),
-        ),
-        onPressed: (){Navigator.pop(context);},
+      appBar: AppBar(
+        backgroundColor: Color(0xff303030),
+        title: Text("Sign In", style: TextStyle(color: Colors.white),),
+        centerTitle: true,
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -198,9 +193,9 @@ class _UserSignInState extends State<UserSignInPage>{
                       child: Text("Sign In", style: TextStyle(color: Colors.black,fontSize: 16),),
                       color: Color(0xff33ffcc),
                       onPressed: () async {
+                        FocusScope.of(context).unfocus();
                         if(_formKey.currentState.validate()) {
                           _formKey.currentState.save();
-                          FocusScope.of(context).unfocus();
                           await signIn();
                         }
                       }
